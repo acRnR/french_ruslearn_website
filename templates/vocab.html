@@ -11,8 +11,24 @@
   <li><a href="{{ quizes_refer }}">Контрольные</a></li>
   <li><a href="{{ return_refer }}">Выйти</a></li>
 </ul>
-
+<h1>{{ vocab_category }}</h1>
 <div class="vocabulary">
+    <table>
+        <thead>
+        <tr>
+            <th scope="col">russe</th>
+            <th scope="col">français</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for el in voc %}
+        <tr>
+            <th scope="col">{{ el[0] }}</th>
+            <th scope="col">{{ el[1] }}</th>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 <a href="{{ test_refer }}">Тест</a>
