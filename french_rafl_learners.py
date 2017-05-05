@@ -1,9 +1,34 @@
 from flask import Flask
 from flask import url_for, render_template, request, redirect
 from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy.orm import mapper, sessionmaker
+from sqlalchemy.sql import select
 
 
 app = Flask(__name__)
+
+def  shtuka():
+    class Words(object):
+        pass
+
+    db_path = 'vocabulary.db'
+    engine = create_engine('sqlite:///%s' % db_path, echo=True)
+    metadata = MetaData(engine)
+    rus_words = Table('rus_words', metadata, autoload=True)
+    mapper(Words, rus_words)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    conn = engine.connect()
+    s = select([rus_words])
+    result = conn.execute(s)
+
+    arr = []
+    for row in result:
+        if row[2] == 's':
+            arr.append([row[0], row[1]])
+            #print('RUS:', row[0], 'FRAN:', row[1])
+    return arr
 
 
 @app.route('/')
@@ -12,8 +37,8 @@ def material_page():
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
     # todo: чтобы возвращал страницу со ссылками на все материалы и тесты, а не vocab.html
-    return render_template('vocab.html',
-                           profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer)
+    return 'kek'#render_template('vocab.html',
+            #               profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer)
 
 
 @app.route('/profile_page')
@@ -43,8 +68,7 @@ def test_page():
 
 @app.route('/materials/vocab_nouns')
 def vocab_nouns():
-
-    voc =
+    voc = shtuka()
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
