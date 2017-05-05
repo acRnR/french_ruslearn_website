@@ -9,7 +9,7 @@ import html
 
 app = Flask(__name__)
 
-def  shtuka(partofsp):
+def voc_maker(partofsp):
     class Words(object):
         pass
 
@@ -34,7 +34,7 @@ def  shtuka(partofsp):
 
 
 @app.route('/')
-def material_page():
+def profile_page():
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
@@ -42,69 +42,63 @@ def material_page():
     v_v = url_for('vocab_verbs')
     a_v = url_for('vocab_adverbs')
     # todo: добавить ссылки на тесты
-    return render_template('materials.html',
+    return render_template('profile_page.html',
                            profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
                            noun_voc=n_v, verb_voc=v_v, adv_voc=a_v)
 
 
-@app.route('/profile_page')
-def profile_page():
-    materials_refer = url_for('material_page')
-    quizes_refer = url_for('quizes_page')
-    return render_template('profile_page.html',
-                           materials_refer=materials_refer, quizes_refer=quizes_refer)
+#@app.route('/profile_page')
+#def profile_page():
+ #   materials_refer = url_for('material_page')
+  #  quizes_refer = url_for('quizes_page')
+   # return render_template('profile_page.html',
+    #                       materials_refer=materials_refer, quizes_refer=quizes_refer)
 
 
 @app.route('/quizes_page')
 def quizes_page():
-    materials_refer = url_for('material_page')
     profile_refer = url_for('profile_page')
-    return render_template('quizes_page.html',
-                           materials_refer=materials_refer, profile_refer=profile_refer)
+    return render_template('quizes_page.html', profile_refer=profile_refer)
 
 
 @app.route('/test_page')
 def test_page():
     profile_refer = url_for('profile_page')
-    materials_refer = url_for('material_page')
     quizes_refer = url_for('quizes_page')
     return render_template('test_page.html',
-                           profile_refer=profile_refer, materials_refer=materials_refer, quizes_refer=quizes_refer)
+                           profile_refer=profile_refer, quizes_refer=quizes_refer)
 
 
 @app.route('/materials/vocab_nouns')
 def vocab_nouns():
-    voc = shtuka('s')
-    materials_refer = url_for('material_page')
+    voc = voc_maker('s')
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
     return render_template('vocab.html',
-                           profile_refer=profile_refer, materials_refer=materials_refer, quizes_refer=quizes_refer, test_refer=test_refer,
+                           profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
                            voc = voc, vocab_category='Le Substantif')
 
 
 @app.route('/materials/vocab_verbs')
 def vocab_verbs():
-    voc = shtuka('v')
-    materials_refer = url_for('material_page')
+    voc = voc_maker('v')
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
     return render_template('vocab.html',
-                           profile_refer=profile_refer, materials_refer=materials_refer, quizes_refer=quizes_refer, test_refer=test_refer,
+                           profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
                            voc=voc, vocab_category='Le Verbe')
 
 
 @app.route('/materials/vocab_adverbs')
 def vocab_adverbs():
-    voc = shtuka('adv')
-    materials_refer = url_for('material_page')
+    voc = voc_maker('adv')
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
     return render_template('vocab.html',
-                           profile_refer=profile_refer, materials_refer=materials_refer, quizes_refer=quizes_refer, test_refer=test_refer,
+                           profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
                            voc=voc, vocab_category="L'Adverbe")
 
 
