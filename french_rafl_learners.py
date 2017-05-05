@@ -4,6 +4,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.sql import select
+import html
 
 
 app = Flask(__name__)
@@ -24,6 +25,8 @@ def  shtuka():
     result = conn.execute(s)
 
     arr = []
+    arr.append(['ма&#769;ма', 'дорога&#769;я'])
+    # todo: по категориям
     for row in result:
         if row[2] == 's':
             arr.append([row[0], row[1]])
@@ -37,7 +40,7 @@ def material_page():
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
     # todo: чтобы возвращал страницу со ссылками на все материалы и тесты, а не vocab.html
-    return 'kek'#render_template('vocab.html',
+    return 'ke&#769;kа&#769; или ка&#x301;к'#render_template('vocab.html',
             #               profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer)
 
 

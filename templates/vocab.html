@@ -6,7 +6,7 @@
 </head>
 <body>
 <ul class="menu-main">
-  <li><a href="{{ profile_refer }}">Личный кабинет</a></li>
+  <li><a href="{{ profile_refer }}">Ли&#769;чный кабинет</a></li>
   <li><a href="" class="current">Материалы и тесты</a></li>
   <li><a href="{{ quizes_refer }}">Контрольные</a></li>
   <li><a href="{{ return_refer }}">Выйти</a></li>
@@ -23,8 +23,8 @@
         <tbody>
         {% for el in voc %}
         <tr>
-            <th scope="col">{{ el[0] }}</th>
-            <th scope="col">{{ el[1] }}</th>
+            <th>{{ el[0]|safe }}</th>
+            <th>{{ el[1] }}</th>
         </tr>
         {% endfor %}
         </tbody>
