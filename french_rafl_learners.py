@@ -38,9 +38,13 @@ def material_page():
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
-    # todo: чтобы возвращал страницу со ссылками на все материалы и тесты, а не vocab.html
-    return 'ke&#769;kа&#769; или ка&#x301;к'#render_template('vocab.html',
-            #               profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer)
+    n_v = url_for('vocab_nouns')
+    v_v = url_for('vocab_verbs')
+    a_v = url_for('vocab_adverbs')
+    # todo: добавить ссылки на тесты
+    return render_template('materials.html',
+                           profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
+                           noun_voc=n_v, verb_voc=v_v, adv_voc=a_v)
 
 
 @app.route('/profile_page')
@@ -71,33 +75,36 @@ def test_page():
 @app.route('/materials/vocab_nouns')
 def vocab_nouns():
     voc = shtuka('s')
+    materials_refer = url_for('material_page')
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
     return render_template('vocab.html',
-                           profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
+                           profile_refer=profile_refer, materials_refer=materials_refer, quizes_refer=quizes_refer, test_refer=test_refer,
                            voc = voc, vocab_category='Le Substantif')
 
 
 @app.route('/materials/vocab_verbs')
 def vocab_verbs():
     voc = shtuka('v')
+    materials_refer = url_for('material_page')
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
     return render_template('vocab.html',
-                           profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
+                           profile_refer=profile_refer, materials_refer=materials_refer, quizes_refer=quizes_refer, test_refer=test_refer,
                            voc=voc, vocab_category='Le Verbe')
 
 
 @app.route('/materials/vocab_adverbs')
 def vocab_adverbs():
     voc = shtuka('adv')
+    materials_refer = url_for('material_page')
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
     return render_template('vocab.html',
-                           profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
+                           profile_refer=profile_refer, materials_refer=materials_refer, quizes_refer=quizes_refer, test_refer=test_refer,
                            voc=voc, vocab_category="L'Adverbe")
 
 
