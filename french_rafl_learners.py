@@ -9,7 +9,7 @@ import html
 
 app = Flask(__name__)
 
-def  shtuka():
+def  shtuka(partofsp):
     class Words(object):
         pass
 
@@ -25,10 +25,9 @@ def  shtuka():
     result = conn.execute(s)
 
     arr = []
-    arr.append(['ма&#769;ма', 'дорога&#769;я'])
     # todo: по категориям
     for row in result:
-        if row[2] == 's':
+        if row[2] == partofsp:
             arr.append([row[0], row[1]])
             #print('RUS:', row[0], 'FRAN:', row[1])
     return arr
@@ -71,13 +70,35 @@ def test_page():
 
 @app.route('/materials/vocab_nouns')
 def vocab_nouns():
-    voc = shtuka()
+    voc = shtuka('s')
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
     return render_template('vocab.html',
                            profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
-                           voc = voc, vocab_category='Substantif')
+                           voc = voc, vocab_category='Le Substantif')
+
+
+@app.route('/materials/vocab_verbs')
+def vocab_verbs():
+    voc = shtuka('v')
+    profile_refer = url_for('profile_page')
+    quizes_refer = url_for('quizes_page')
+    test_refer = url_for('test_page')
+    return render_template('vocab.html',
+                           profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
+                           voc=voc, vocab_category='Le Verbe')
+
+
+@app.route('/materials/vocab_adverbs')
+def vocab_adverbs():
+    voc = shtuka('adv')
+    profile_refer = url_for('profile_page')
+    quizes_refer = url_for('quizes_page')
+    test_refer = url_for('test_page')
+    return render_template('vocab.html',
+                           profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
+                           voc=voc, vocab_category="L'Adverbe")
 
 
 if __name__ == '__main__':
