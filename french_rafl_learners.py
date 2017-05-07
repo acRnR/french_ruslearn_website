@@ -1,5 +1,7 @@
+import os
+import random
 from flask import Flask
-from flask import url_for, render_template, request, redirect
+from flask import url_for, render_template, request, redirect, flash, session
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.orm import mapper, sessionmaker
@@ -8,18 +10,27 @@ import html
 
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
+
+
+#questions = { "1" : { "question" : "Which city is the capital of India?", "answer" : "New Delhi"},
+ #             "2" : { "question" : "Who is the president of the USA?", "answer" : "Barack Obama" },
+  #            "3" : { "question" : "Which is the world's highest mountain?", "answer" : "Mount Everest"},
+   #           "4" : { "question" : "Which is the largest star of the solar system?", "answer" : "Sun"},
+    #          "5" : { "question" : "How many days are there in a leap year?", "answer" : "366" } }
+
 
 def voc_maker(partofsp):
     class Words(object):
         pass
 
     db_path = 'vocabulary.db'
-    engine = create_engine('sqlite:///%s' % db_path, echo=True)
+    engine = create_engine('sqlite:///%s' % db_path, echo=False)
     metadata = MetaData(engine)
     rus_words = Table('rus_words', metadata, autoload=True)
     mapper(Words, rus_words)
-    Session = sessionmaker(bind=engine)
-    session = Session()
+    sessionmaker(bind=engine)
+    #sess = Session()
     conn = engine.connect()
     s = select([rus_words])
     result = conn.execute(s)
@@ -31,6 +42,33 @@ def voc_maker(partofsp):
             arr.append([row['Rus'], row['Fran']])
             #print('RUS:', row[0], 'FRAN:', row[1])
     return arr
+
+
+def quiz_maker():
+    questions = {}
+
+    class Words(object):
+        pass
+
+    db_path = 'vocabulary.db'
+    engine = create_engine('sqlite:///%s' % db_path, echo=False)
+    metadata = MetaData(engine)
+    rus_words = Table('rus_words', metadata, autoload=True)
+    mapper(Words, rus_words)
+    sessionmaker(bind=engine)
+    # sess = Session()
+    conn = engine.connect()
+    s = select([rus_words])
+    result = conn.execute(s)
+
+    quiz_mater = random.sample(list(result), 5)
+
+    i = 1
+    for row in quiz_mater:
+        questions[str(i)] = {"question": row[0], "answer": row[1]}
+        i += 1
+    print('WAAAAT', questions)
+    return questions
 
 
 @app.route('/')
@@ -61,13 +99,33 @@ def quizes_page():
     return render_template('quizes_page.html', profile_refer=profile_refer)
 
 
-@app.route('/test_page')
+@app.route('/test_page', methods=['GET', 'POST'])
 def test_page():
+    questions = quiz_maker()
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
-    return render_template('test_page.html',
-                           profile_refer=profile_refer, quizes_refer=quizes_refer)
 
+    if request.method == "POST":
+        entered_answer = request.form.get('answer', '')
+        print('AAAAAAA', entered_answer)
+        if not entered_answer:
+            flash("Please enter an answer", "error")  # Show error if no answer entered
+        elif entered_answer != questions[session["current_question"]]["answer"]:
+            flash("The answer is incorrect. Try again", "error")
+        else:
+            session["current_question"] = str(int(session["current_question"]) + 1)
+            if session["current_question"] in questions:
+                redirect(url_for('test_page'))
+            else:
+                return render_template("success.html")
+    if "current_question" not in session:
+        session["current_question"] = "1"
+    elif session["current_question"] not in questions:
+        return render_template("success.html")
+    return render_template("test_page.html",
+                           question=questions[session["current_question"]]["question"],
+                           question_number=session["current_question"],
+                           profile_refer=profile_refer, quizes_refer=quizes_refer)
 
 @app.route('/materials/vocab_nouns')
 def vocab_nouns():
