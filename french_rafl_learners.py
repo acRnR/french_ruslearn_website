@@ -27,8 +27,8 @@ def voc_maker(partofsp):
     arr = []
     # todo: по категориям
     for row in result:
-        if row[2] == partofsp:
-            arr.append([row[0], row[1]])
+        if row['part_of_speech'] == partofsp:
+            arr.append([row['Rus'], row['Fran']])
             #print('RUS:', row[0], 'FRAN:', row[1])
     return arr
 
