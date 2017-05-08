@@ -20,7 +20,7 @@ app.secret_key = os.urandom(24)
     #          "5" : { "question" : "How many days are there in a leap year?", "answer" : "366" } }
 
 
-def voc_maker(partofsp):
+def voc_maker(ps, categories):
     class Words(object):
         pass
 
@@ -35,13 +35,24 @@ def voc_maker(partofsp):
     s = select([rus_words])
     result = conn.execute(s)
 
-    arr = []
-    # todo: по категориям
+
+    d = {}
     for row in result:
-        if row['part_of_speech'] == partofsp:
-            arr.append([row['Rus'], row['Fran']])
-            #print('RUS:', row[0], 'FRAN:', row[1])
-    return arr
+        if row['part_of_speech'] == ps:
+            for category in categories:
+                #print('AaAAAAaAAA', row['category'])
+                if row['category'] == category or row['extra_info'] == category:
+                #arr.append(row)
+                    if category not in d:
+                        d[category] = []
+                    d[category].append([row['Rus'], row['Fran']])
+                #arr.append([category, [row['Rus'], row['Fran']]])
+                #print('RUS:', row[0], 'FRAN:', row[1])
+    #if extra is not None:
+     #   for row in result:
+      #      if row['extra_info'] == extra:
+
+    return d
 
 
 def quiz_maker():
@@ -65,7 +76,7 @@ def quiz_maker():
 
     i = 1
     for row in quiz_mater:
-        questions[str(i)] = {"question": row[0], "answer": row[1]}
+        questions[str(i)] = {"question": row['Rus'], "answer": row['Fran']}
         i += 1
     print('WAAAAT', questions)
     return questions
@@ -129,17 +140,23 @@ def test_page():
                                profile_refer=profile_refer, quizes_refer=quizes_refer)
     except NameError:
         redirect(url_for('vocab_nouns'))
+
+
 @app.route('/materials/vocab_nouns')
 def vocab_nouns():
-    questions = quiz_maker()
+    ps = 's'
+    cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
+    print(ps, cat)
     global questions
-    voc = voc_maker('s')
+    questions = quiz_maker()
+    voc = voc_maker(ps, cat)
+    #print('NOOO', voc)
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_page')
     return render_template('vocab.html',
                            profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
-                           voc = voc, vocab_category='Le Substantif')
+                           mama=cat, voc=voc, vocab_category='Le Substantif')
 
 
 @app.route('/materials/vocab_verbs')
