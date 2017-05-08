@@ -13,13 +13,6 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 
-#questions = { "1" : { "question" : "Which city is the capital of India?", "answer" : "New Delhi"},
- #             "2" : { "question" : "Who is the president of the USA?", "answer" : "Barack Obama" },
-  #            "3" : { "question" : "Which is the world's highest mountain?", "answer" : "Mount Everest"},
-   #           "4" : { "question" : "Which is the largest star of the solar system?", "answer" : "Sun"},
-    #          "5" : { "question" : "How many days are there in a leap year?", "answer" : "366" } }
-
-
 def voc_maker(ps, categories):
     class Words(object):
         pass
@@ -30,63 +23,65 @@ def voc_maker(ps, categories):
     rus_words = Table('rus_words', metadata, autoload=True)
     mapper(Words, rus_words)
     sessionmaker(bind=engine)
-    #sess = Session()
     conn = engine.connect()
     s = select([rus_words])
     result = conn.execute(s)
 
-
-    d = {}
-    for row in result:
-        if row['part_of_speech'] == ps:
-            for category in categories:
-                #print('AaAAAAaAAA', row['category'])
-                if row['category'] == category or row['extra_info'] == category:
-                #arr.append(row)
-                    if category not in d:
-                        d[category] = []
-                    d[category].append([row['Rus'], row['Fran']])
-                #arr.append([category, [row['Rus'], row['Fran']]])
-                #print('RUS:', row[0], 'FRAN:', row[1])
-    #if extra is not None:
-     #   for row in result:
-      #      if row['extra_info'] == extra:
-
+    d = sorting(result, ps, categories)
     return d
 
 
-def quiz_maker():
-    questions = {}
+def sorting(data, ps, categories):
+    d = {}
+    for row in data:
+        if row['part_of_speech'] == ps:
+            for category in categories:
+                # print('AaAAAAaAAA', row['category'])
+                if row['category'] == category or row['extra_info'] == category:
+                    if category not in d:
+                        d[category] = []
+                    d[category].append([row['Rus'], row['Fran']])
+    return d
 
+
+def quiz_maker(ps, cat):
+    #questions = {}
     class Words(object):
         pass
-
     db_path = 'vocabulary.db'
     engine = create_engine('sqlite:///%s' % db_path, echo=False)
     metadata = MetaData(engine)
     rus_words = Table('rus_words', metadata, autoload=True)
     mapper(Words, rus_words)
     sessionmaker(bind=engine)
-    # sess = Session()
     conn = engine.connect()
     s = select([rus_words])
     result = conn.execute(s)
 
-    quiz_mater = random.sample(list(result), 5)
+    d = sorting(result, ps, cat)
+    #i = 1
+    newd = {}
+    for key in d:#{'1d':[['лол', 'lol'], ['шта', 'wut']]}
+        #qs = {}
+        quiz_mater = random.sample(d[key], 5)
+        quests = {}
+        i = 1
+        for row in quiz_mater:
+            quests[str(i)] = {"question": row[0], "answer": row[1]}
 
-    i = 1
-    for row in quiz_mater:
-        questions[str(i)] = {"question": row['Rus'], "answer": row['Fran']}
-        i += 1
-    print('WAAAAT', questions)
-    return questions
+            #qs.append(quests)
+            i += 1
+            newd[key] = quests
+    #print('WAAAAT', questions)
+    #{ cat : [ 1 : {"question": row[0], "answer": row[1]}, 2 : {"question": row[0], "answer": row[1]} }]
+    return newd
 
 
 @app.route('/')
 def profile_page():
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
-    test_refer = url_for('test_page')
+    test_refer = url_for('test_1d')
     n_v = url_for('vocab_nouns')
     v_v = url_for('vocab_verbs')
     a_v = url_for('vocab_adverbs')
@@ -110,9 +105,8 @@ def quizes_page():
     return render_template('quizes_page.html', profile_refer=profile_refer)
 
 
-@app.route('/test_page', methods=['GET', 'POST'])
-def test_page():
-    #questions = quiz_maker()
+@app.route('/test/1d', methods=['GET', 'POST'])
+def test_1d():
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
@@ -122,20 +116,21 @@ def test_page():
             print('AAAAAAA', entered_answer)
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions[session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions[session["current_question"]]["answer"], "error")
+            elif entered_answer != questions["1d"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions["1d"][session["current_question"]]["answer"], "error")
             else:
                 session["current_question"] = str(int(session["current_question"]) + 1)
                 if session["current_question"] in questions:
-                    redirect(url_for('test_page'))
+                    redirect(url_for('test_1d'))
                 else:
-                    return render_template("success.html")
+                    print('ahaaaa')
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
         if "current_question" not in session:
             session["current_question"] = "1"
-        elif session["current_question"] not in questions:
-            return render_template("success.html")
+        elif session["current_question"] not in questions["1d"]:
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
         return render_template("test_page.html",
-                               question=questions[session["current_question"]]["question"],
+                               question=questions["1d"][session["current_question"]]["question"],
                                question_number=session["current_question"],
                                profile_refer=profile_refer, quizes_refer=quizes_refer)
     except NameError:
@@ -146,14 +141,14 @@ def test_page():
 def vocab_nouns():
     ps = 's'
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
-    print(ps, cat)
+    #print(ps, cat)
     global questions
-    questions = quiz_maker()
+    questions = quiz_maker(ps,cat)
     voc = voc_maker(ps, cat)
     #print('NOOO', voc)
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
-    test_refer = url_for('test_page')
+    test_refer = url_for('test_1d')
     return render_template('vocab.html',
                            profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
                            mama=cat, voc=voc, vocab_category='Le Substantif')
@@ -175,7 +170,7 @@ def vocab_adverbs():
     voc = voc_maker('adv')
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
-    test_refer = url_for('test_page')
+    test_refer = url_for('test_1d')
     return render_template('vocab.html',
                            profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
                            voc=voc, vocab_category="L'Adverbe")
