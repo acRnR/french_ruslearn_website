@@ -101,34 +101,38 @@ def quizes_page():
 
 @app.route('/test_page', methods=['GET', 'POST'])
 def test_page():
-    questions = quiz_maker()
-    profile_refer = url_for('profile_page')
-    quizes_refer = url_for('quizes_page')
+    #questions = quiz_maker()
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
 
-    if request.method == "POST":
-        entered_answer = request.form.get('answer', '')
-        print('AAAAAAA', entered_answer)
-        if not entered_answer:
-            flash("Please enter an answer", "error")  # Show error if no answer entered
-        elif entered_answer != questions[session["current_question"]]["answer"]:
-            flash("The answer is incorrect. Try again", "error")
-        else:
-            session["current_question"] = str(int(session["current_question"]) + 1)
-            if session["current_question"] in questions:
-                redirect(url_for('test_page'))
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            print('AAAAAAA', entered_answer)
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer != questions[session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions[session["current_question"]]["answer"], "error")
             else:
-                return render_template("success.html")
-    if "current_question" not in session:
-        session["current_question"] = "1"
-    elif session["current_question"] not in questions:
-        return render_template("success.html")
-    return render_template("test_page.html",
-                           question=questions[session["current_question"]]["question"],
-                           question_number=session["current_question"],
-                           profile_refer=profile_refer, quizes_refer=quizes_refer)
-
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions:
+                    redirect(url_for('test_page'))
+                else:
+                    return render_template("success.html")
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions:
+            return render_template("success.html")
+        return render_template("test_page.html",
+                               question=questions[session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer)
+    except NameError:
+        redirect(url_for('vocab_nouns'))
 @app.route('/materials/vocab_nouns')
 def vocab_nouns():
+    questions = quiz_maker()
+    global questions
     voc = voc_maker('s')
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
