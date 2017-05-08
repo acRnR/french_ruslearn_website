@@ -105,7 +105,7 @@ def quizes_page():
     return render_template('quizes_page.html', profile_refer=profile_refer)
 
 
-@app.route('/test/1d', methods=['GET', 'POST'])
+@app.route('/materials/test_1d', methods=['GET', 'POST'])
 def test_1d():
     try:
         profile_refer = url_for('profile_page')
@@ -132,7 +132,38 @@ def test_1d():
         return render_template("test_page.html",
                                question=questions["1d"][session["current_question"]]["question"],
                                question_number=session["current_question"],
-                               profile_refer=profile_refer, quizes_refer=quizes_refer)
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='1d')
+    except NameError:
+        redirect(url_for('vocab_nouns'))
+
+@app.route('/materials/test_m', methods=['GET', 'POST'])
+def test_m():
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            print('AAAAAAA', entered_answer)
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer != questions["m"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions["m"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions:
+                    redirect(url_for('test_m'))
+                else:
+                    print('ahaaaa')
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions["m"]:
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_page.html",
+                               question=questions["m"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='m')
     except NameError:
         redirect(url_for('vocab_nouns'))
 
@@ -141,6 +172,7 @@ def test_1d():
 def vocab_nouns():
     ps = 's'
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
+
     #print(ps, cat)
     global questions
     questions = quiz_maker(ps,cat)
@@ -148,10 +180,12 @@ def vocab_nouns():
     #print('NOOO', voc)
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
-    test_refer = url_for('test_1d')
+    #test_refer = url_for('test_1d')
+    a1d = url_for('test_1d')
     return render_template('vocab.html',
-                           profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
-                           mama=cat, voc=voc, vocab_category='Le Substantif')
+                           profile_refer=profile_refer, quizes_refer=quizes_refer,# test_refer=test_refer,
+                           mama=cat, voc=voc, vocab_category='Le Substantif',
+                           a1d=a1d)
 
 
 @app.route('/materials/vocab_verbs')
