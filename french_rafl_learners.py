@@ -14,6 +14,7 @@ app.secret_key = os.urandom(24)
 
 
 def voc_maker(ps, categories):
+    print('vocmaker ON')
     class Words(object):
         pass
 
@@ -28,10 +29,12 @@ def voc_maker(ps, categories):
     result = conn.execute(s)
 
     d = sorting(result, ps, categories)
+    print('vocmaker OFF\n', d)
     return d
 
 
 def sorting(data, ps, categories):
+    print('sorting')
     d = {}
     for row in data:
         if row['part_of_speech'] == ps:
@@ -40,10 +43,12 @@ def sorting(data, ps, categories):
                     if category not in d:
                         d[category] = []
                     d[category].append([row['Rus'], row['Fran']])
+    print('sorted')
     return d
 
 
 def quiz_maker(ps, cat):
+    print('quizmaker ON')
     class Words(object):
         pass
     db_path = 'vocabulary.db'
@@ -71,6 +76,7 @@ def quiz_maker(ps, cat):
             i += 1
             newd[key] = quests
     #{ cat : [ 1 : {"question": row[0], "answer": row[1]}, 2 : {"question": row[0], "answer": row[1]} }]
+    print('quizmaker OFF')
     return newd
 
 
@@ -88,18 +94,26 @@ def profile_page():
                            noun_voc=n_v, verb_voc=v_v, adv_voc=a_v)
 
 
-#@app.route('/profile_page')
-#def profile_page():
- #   materials_refer = url_for('material_page')
-  #  quizes_refer = url_for('quizes_page')
-   # return render_template('profile_page.html',
-    #                       materials_refer=materials_refer, quizes_refer=quizes_refer)
-
-
 @app.route('/quizes_page')
 def quizes_page():
     profile_refer = url_for('profile_page')
     return render_template('quizes_page.html', profile_refer=profile_refer)
+
+"""------------------------------------------------------------------------------------------"""
+
+@app.route('/materials/vocab_nouns')
+def vocab_nouns():
+    ps = 's'
+    cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
+    session['questions_n'] = quiz_maker(ps,cat)
+    voc = voc_maker(ps, cat)
+    profile_refer = url_for('profile_page')
+    quizes_refer = url_for('quizes_page')
+    #a1d = url_for('test_1d')
+    return render_template('vocab.html',
+                           profile_refer=profile_refer, quizes_refer=quizes_refer,# test_refer=test_refer,
+                           mama=cat, voc=voc, vocab_category='Le Substantif')#,
+                           #a1d=a1d)
 
 
 @app.route('/materials/test_1d', methods=['GET', 'POST'])
@@ -132,6 +146,7 @@ def test_1d():
                                profile_refer=profile_refer, quizes_refer=quizes_refer, cat='1d')
     except NameError:
         redirect(url_for('vocab_nouns'))
+
 
 @app.route('/materials/test_m', methods=['GET', 'POST'])
 def test_m():
@@ -295,21 +310,7 @@ def test_pl_tantum():
     except NameError:
         redirect(url_for('vocab_nouns'))
 
-
-@app.route('/materials/vocab_nouns')
-def vocab_nouns():
-    ps = 's'
-    cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
-    session['questions_n'] = quiz_maker(ps,cat)
-    voc = voc_maker(ps, cat)
-    profile_refer = url_for('profile_page')
-    quizes_refer = url_for('quizes_page')
-    #a1d = url_for('test_1d')
-    return render_template('vocab.html',
-                           profile_refer=profile_refer, quizes_refer=quizes_refer,# test_refer=test_refer,
-                           mama=cat, voc=voc, vocab_category='Le Substantif')#,
-                           #a1d=a1d)
-
+"""-------------------------------------------------------------------------------------------"""
 
 @app.route('/materials/vocab_verbs')
 def vocab_verbs():
@@ -511,16 +512,53 @@ def test_2_improductif():
     except NameError:
         redirect(url_for('vocab_verbs'))
 
+"""---------------------------------------------------------------------------------------------------"""
 
 @app.route('/materials/vocab_adverbs')
 def vocab_adverbs():
-    voc = voc_maker('adv')
+    ps = 'adv'
+    cat = ['adv']
+    session['questions_adv'] = quiz_maker(ps, cat)
+    voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
     test_refer = url_for('test_1d')
     return render_template('vocab.html',
                            profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
-                           voc=voc, vocab_category="L'Adverbe")
+                           mama=cat, voc=voc, vocab_category="L'Adverbe")
+
+
+@app.route('/materials/test_adv', methods=['GET', 'POST'])
+def test_adv():
+    questions_adv = session['questions_adv']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer != questions_adv["adv"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_adv["adv"][session["current_question"]]["answer"],
+                      "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_adv:
+                    redirect(url_for('test_adv'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_adv["adv"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+
+        return render_template("test_page.html",
+                               question=questions_adv["adv"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='adv')
+    except NameError:
+        redirect(url_for('vocab_adverbs'))
 
 
 if __name__ == '__main__':
