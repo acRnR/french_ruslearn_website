@@ -36,7 +36,6 @@ def sorting(data, ps, categories):
     for row in data:
         if row['part_of_speech'] == ps:
             for category in categories:
-                # print('AaAAAAaAAA', row['category'])
                 if row['category'] == category or row['extra_info'] == category:
                     if category not in d:
                         d[category] = []
@@ -45,7 +44,6 @@ def sorting(data, ps, categories):
 
 
 def quiz_maker(ps, cat):
-    #questions = {}
     class Words(object):
         pass
     db_path = 'vocabulary.db'
@@ -72,7 +70,6 @@ def quiz_maker(ps, cat):
             #qs.append(quests)
             i += 1
             newd[key] = quests
-    #print('WAAAAT', questions)
     #{ cat : [ 1 : {"question": row[0], "answer": row[1]}, 2 : {"question": row[0], "answer": row[1]} }]
     return newd
 
@@ -107,6 +104,7 @@ def quizes_page():
 
 @app.route('/materials/test_1d', methods=['GET', 'POST'])
 def test_1d():
+    questions_n = session['questions_n']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
@@ -115,21 +113,21 @@ def test_1d():
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions["1d"][session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions["1d"][session["current_question"]]["answer"], "error")
+            elif entered_answer != questions_n["1d"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_n["1d"][session["current_question"]]["answer"], "error")
             else:
                 session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                if session["current_question"] in questions_n:
                     redirect(url_for('test_1d'))
                 else:
                     return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
         if "current_question" not in session:
             session["current_question"] = "1"
-        elif session["current_question"] not in questions["1d"]:
+        elif session["current_question"] not in questions_n["1d"]:
             session.pop("current_question")
             return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
         return render_template("test_page.html",
-                               question=questions["1d"][session["current_question"]]["question"],
+                               question=questions_n["1d"][session["current_question"]]["question"],
                                question_number=session["current_question"],
                                profile_refer=profile_refer, quizes_refer=quizes_refer, cat='1d')
     except NameError:
@@ -137,6 +135,7 @@ def test_1d():
 
 @app.route('/materials/test_m', methods=['GET', 'POST'])
 def test_m():
+    questions_n = session['questions_n']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
@@ -144,21 +143,21 @@ def test_m():
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions["m"][session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions["m"][session["current_question"]]["answer"], "error")
+            elif entered_answer != questions_n["m"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_n["m"][session["current_question"]]["answer"], "error")
             else:
                 session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                if session["current_question"] in questions_n:
                     redirect(url_for('test_m'))
                 else:
                     return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
         if "current_question" not in session:
             session["current_question"] = "1"
-        elif session["current_question"] not in questions["m"]:
+        elif session["current_question"] not in questions_n["m"]:
             session.pop("current_question")
             return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
         return render_template("test_page.html",
-                               question=questions["m"][session["current_question"]]["question"],
+                               question=questions_n["m"][session["current_question"]]["question"],
                                question_number=session["current_question"],
                                profile_refer=profile_refer, quizes_refer=quizes_refer, cat='m')
     except NameError:
@@ -167,6 +166,7 @@ def test_m():
 
 @app.route('/materials/test_n', methods=['GET', 'POST'])
 def test_n():
+    questions_n = session['questions_n']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
@@ -176,22 +176,22 @@ def test_n():
             print('AAAAAAA', entered_answer)
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions["n"][session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions["n"][session["current_question"]]["answer"], "error")
+            elif entered_answer != questions_n["n"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_n["n"][session["current_question"]]["answer"], "error")
             else:
                 session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                if session["current_question"] in questions_n:
                     redirect(url_for('test_n'))
                 else:
                     print('ahaaaa')
                     return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
         if "current_question" not in session:
             session["current_question"] = "1"
-        elif session["current_question"] not in questions["n"]:
+        elif session["current_question"] not in questions_n["n"]:
             session.pop("current_question")
             return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
         return render_template("test_page.html",
-                               question=questions["n"][session["current_question"]]["question"],
+                               question=questions_n["n"][session["current_question"]]["question"],
                                question_number=session["current_question"],
                                profile_refer=profile_refer, quizes_refer=quizes_refer, cat='n')
     except NameError:
@@ -200,6 +200,7 @@ def test_n():
 
 @app.route('/materials/test_3d', methods=['GET', 'POST'])
 def test_3d():
+    questions_n = session['questions_n']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
@@ -209,22 +210,22 @@ def test_3d():
             print('AAAAAAA', entered_answer)
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions["3d"][session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions["3d"][session["current_question"]]["answer"], "error")
+            elif entered_answer != questions_n["3d"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_n["3d"][session["current_question"]]["answer"], "error")
             else:
                 session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                if session["current_question"] in questions_n:
                     redirect(url_for('test_3d'))
                 else:
                     print('ahaaaa')
                     return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
         if "current_question" not in session:
             session["current_question"] = "1"
-        elif session["current_question"] not in questions["3d"]:
+        elif session["current_question"] not in questions_n["3d"]:
             session.pop("current_question")
             return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
         return render_template("test_page.html",
-                               question=questions["3d"][session["current_question"]]["question"],
+                               question=questions_n["3d"][session["current_question"]]["question"],
                                question_number=session["current_question"],
                                profile_refer=profile_refer, quizes_refer=quizes_refer, cat='3d')
     except NameError:
@@ -233,31 +234,30 @@ def test_3d():
 
 @app.route('/materials/test_sg_tantum', methods=['GET', 'POST'])
 def test_sg_tantum():
+    questions_n = session['questions_n']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
 
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
-            print('AAAAAAA', entered_answer)
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions["sg_tantum"][session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions["sg_tantum"][session["current_question"]]["answer"], "error")
+            elif entered_answer != questions_n["sg_tantum"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_n["sg_tantum"][session["current_question"]]["answer"], "error")
             else:
                 session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                if session["current_question"] in questions_n:
                     redirect(url_for('test_sg_tantum'))
                 else:
-                    print('ahaaaa')
                     return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
         if "current_question" not in session:
             session["current_question"] = "1"
-        elif session["current_question"] not in questions["sg_tantum"]:
+        elif session["current_question"] not in questions_n["sg_tantum"]:
             session.pop("current_question")
             return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
         return render_template("test_page.html",
-                               question=questions["sg_tantum"][session["current_question"]]["question"],
+                               question=questions_n["sg_tantum"][session["current_question"]]["question"],
                                question_number=session["current_question"],
                                profile_refer=profile_refer, quizes_refer=quizes_refer, cat='sg_tantum')
     except NameError:
@@ -266,6 +266,7 @@ def test_sg_tantum():
 
 @app.route('/materials/test_pl_tantum', methods=['GET', 'POST'])
 def test_pl_tantum():
+    questions_n = session['questions_n']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
@@ -274,21 +275,21 @@ def test_pl_tantum():
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions["pl_tantum"][session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions["pl_tantum"][session["current_question"]]["answer"], "error")
+            elif entered_answer != questions_n["pl_tantum"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_n["pl_tantum"][session["current_question"]]["answer"], "error")
             else:
                 session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                if session["current_question"] in questions_n:
                     redirect(url_for('test_pl_tantum'))
                 else:
                     return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
         if "current_question" not in session:
             session["current_question"] = "1"
-        elif session["current_question"] not in questions["pl_tantum"]:
+        elif session["current_question"] not in questions_n["pl_tantum"]:
             session.pop("current_question")
             return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
         return render_template("test_page.html",
-                               question=questions["pl_tantum"][session["current_question"]]["question"],
+                               question=questions_n["pl_tantum"][session["current_question"]]["question"],
                                question_number=session["current_question"],
                                profile_refer=profile_refer, quizes_refer=quizes_refer, cat='pl_tantum')
     except NameError:
@@ -299,9 +300,7 @@ def test_pl_tantum():
 def vocab_nouns():
     ps = 's'
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
-
-    global questions
-    questions = quiz_maker(ps,cat)
+    session['questions_n'] = quiz_maker(ps,cat)
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
@@ -316,8 +315,7 @@ def vocab_nouns():
 def vocab_verbs():
     ps = 'v'
     cat = ['1_productif', '1_sans_diff', '1_avec_diff', '1_base_altern', '2_productif', '2_improductif']
-    global questions_v
-    questions_v = quiz_maker(ps, cat)
+    session['questions_v'] = quiz_maker(ps, cat)
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
@@ -329,6 +327,7 @@ def vocab_verbs():
 
 @app.route('/materials/test_1_productif', methods=['GET', 'POST'])
 def test_1_productif():
+    questions_v = session['questions_v']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
@@ -359,6 +358,7 @@ def test_1_productif():
 
 @app.route('/materials/test_1_base_altern', methods=['GET', 'POST'])
 def test_1_base_altern():
+    questions_v = session['questions_v']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
@@ -389,6 +389,7 @@ def test_1_base_altern():
 
 @app.route('/materials/test_1_avec_diff', methods=['GET', 'POST'])
 def test_1_avec_diff():
+    questions_v = session['questions_v']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
@@ -419,6 +420,7 @@ def test_1_avec_diff():
 
 @app.route('/materials/test_1_sans_diff', methods=['GET', 'POST'])
 def test_1_sans_diff():
+    questions_v = session['questions_v']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
@@ -449,6 +451,7 @@ def test_1_sans_diff():
 
 @app.route('/materials/test_2_productif', methods=['GET', 'POST'])
 def test_2_productif():
+    questions_v = session['questions_v']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
@@ -479,6 +482,7 @@ def test_2_productif():
 
 @app.route('/materials/test_2_improductif', methods=['GET', 'POST'])
 def test_2_improductif():
+    questions_v = session['questions_v']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
