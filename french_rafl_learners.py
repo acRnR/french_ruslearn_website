@@ -301,30 +301,31 @@ def vocab_nouns():
     ps = 's'
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
 
-    #print(ps, cat)
     global questions
     questions = quiz_maker(ps,cat)
     voc = voc_maker(ps, cat)
-    #print('NOOO', voc)
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
-    #test_refer = url_for('test_1d')
-    a1d = url_for('test_1d')
+    #a1d = url_for('test_1d')
     return render_template('vocab.html',
                            profile_refer=profile_refer, quizes_refer=quizes_refer,# test_refer=test_refer,
-                           mama=cat, voc=voc, vocab_category='Le Substantif',
-                           a1d=a1d)
+                           mama=cat, voc=voc, vocab_category='Le Substantif')#,
+                           #a1d=a1d)
 
 
 @app.route('/materials/vocab_verbs')
 def vocab_verbs():
-    voc = voc_maker('v')
+    ps = 'v'
+    cat = ['I productif', 'I sans différentiel', 'I avec différentiel', 'I avec une base alternante', 'II productif', 'II improductif']
+    global questions_v
+    questions_v = quiz_maker(ps, cat)
+    voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
-    test_refer = url_for('test_page')
+    #test_refer = url_for('test_page')
     return render_template('vocab.html',
-                           profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
-                           voc=voc, vocab_category='Le Verbe')
+                           profile_refer=profile_refer, quizes_refer=quizes_refer,# test_refer=test_refer,
+                           mama=cat, voc=voc, vocab_category='Le Verbe')
 
 
 @app.route('/materials/vocab_adverbs')
