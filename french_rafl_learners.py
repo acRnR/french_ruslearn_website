@@ -272,7 +272,6 @@ def test_pl_tantum():
 
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
-            print('AAAAAAA', entered_answer)
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
             elif entered_answer != questions["pl_tantum"][session["current_question"]]["answer"]:
@@ -282,7 +281,6 @@ def test_pl_tantum():
                 if session["current_question"] in questions:
                     redirect(url_for('test_pl_tantum'))
                 else:
-                    print('ahaaaa')
                     return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
         if "current_question" not in session:
             session["current_question"] = "1"
@@ -316,7 +314,7 @@ def vocab_nouns():
 @app.route('/materials/vocab_verbs')
 def vocab_verbs():
     ps = 'v'
-    cat = ['I productif', 'I sans différentiel', 'I avec différentiel', 'I avec une base alternante', 'II productif', 'II improductif']
+    cat = ['1_productif', '1_sans_diff', '1_avec_diff', '1_base_altern', '2_productif', '2_improductif']
     global questions_v
     questions_v = quiz_maker(ps, cat)
     voc = voc_maker(ps, cat)
@@ -326,6 +324,35 @@ def vocab_verbs():
     return render_template('vocab.html',
                            profile_refer=profile_refer, quizes_refer=quizes_refer,# test_refer=test_refer,
                            mama=cat, voc=voc, vocab_category='Le Verbe')
+
+
+@app.route('/materials/test_1_productif', methods=['GET', 'POST'])
+def test_1_productif():
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer != questions_v["1_productif"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_v["1_productif"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_v:
+                    redirect(url_for('test_1_productif'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_v["1_productif"]:
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_page.html",
+                               question=questions_v["1_productif"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='1_productif')
+    except NameError:
+        redirect(url_for('vocab_verbs'))
 
 
 @app.route('/materials/vocab_adverbs')
