@@ -528,6 +528,195 @@ def test_2_improductif():
     except NameError:
         redirect(url_for('vocab_verbs'))
 
+
+@app.route('/materials/testb_1_productif', methods=['GET', 'POST'])
+def testb_1_productif():
+    questions_v = session['quest_b_v']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') != questions_v["1_productif"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_v["1_productif"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_v:
+                    redirect(url_for('testb_1_productif'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_v["1_productif"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_backw.html",
+                               question=questions_v["1_productif"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='1_productif')
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+
+@app.route('/materials/testb_1_base_altern', methods=['GET', 'POST'])
+def testb_1_base_altern():
+    questions_v = session['quest_b_v']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') != questions_v["1_base_altern"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_v["1_base_altern"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_v:
+                    redirect(url_for('testb_1_base_altern'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_v["1_base_altern"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_backw.html",
+                               question=questions_v["1_base_altern"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='1_base_altern')
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+
+@app.route('/materials/testb_1_avec_diff', methods=['GET', 'POST'])
+def testb_1_avec_diff():
+    questions_v = session['quest_b_v']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') != questions_v["1_avec_diff"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_v["1_avec_diff"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_v:
+                    redirect(url_for('testb_1_avec_diff'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_v["1_avec_diff"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_backw.html",
+                               question=questions_v["1_avec_diff"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='1_avec_diff')
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+
+@app.route('/materials/testb_1_sans_diff', methods=['GET', 'POST'])
+def testb_1_sans_diff():
+    questions_v = session['quest_b_v']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') != questions_v["1_sans_diff"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_v["1_sans_diff"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_v:
+                    redirect(url_for('testb_1_sans_diff'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_v["1_sans_diff"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_backw.html",
+                               question=questions_v["1_sans_diff"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='1_sans_diff')
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+
+@app.route('/materials/testb_2_productif', methods=['GET', 'POST'])
+def testb_2_productif():
+    questions_v = session['quest_b_v']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') != questions_v["2_productif"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_v["2_productif"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_v:
+                    redirect(url_for('testb_2_productif'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_v["2_productif"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_backw.html",
+                               question=questions_v["2_productif"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='2_productif')
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+
+@app.route('/materials/testb_2_improductif', methods=['GET', 'POST'])
+def testb_2_improductif():
+    questions_v = session['quest_b_v']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') != questions_v["2_improductif"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_v["2_improductif"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_v:
+                    redirect(url_for('testb_2_improductif'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_v["2_improductif"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+
+        return render_template("test_backw.html",
+                               question=questions_v["2_improductif"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='2_improductif')
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+
+
 """---------------------------------------------------------------------------------------------------"""
 
 @app.route('/materials/vocab_adverbs')
@@ -589,8 +778,6 @@ def testb_adv():
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
             elif entered_answer.replace('́', '&#769;') != questions_adv["adv"][session["current_question"]]["answer"]:
-                #print(html.unescape(entered_answer))
-                #print(html.escape(entered_answer))
                 flash("La bonne réponse:\n" + questions_adv["adv"][session["current_question"]]["answer"],
                       "error")
             else:
