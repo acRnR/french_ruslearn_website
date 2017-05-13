@@ -47,7 +47,21 @@ def sorting(data, ps, categories):
     return d
 
 
-def quiz_maker(ps, cat):
+def sorting_back(data, ps, categories):
+    print('sorting')
+    d = {}
+    for row in data:
+        if row['part_of_speech'] == ps:
+            for category in categories:
+                if row['category'] == category or row['extra_info'] == category:
+                    if category not in d:
+                        d[category] = []
+                    d[category].append([row['Fran'], row['Rus']])
+    print('sorted')
+    return d
+
+
+def quiz_maker(ps, cat, func):
     print('quizmaker ON')
     class Words(object):
         pass
@@ -61,7 +75,7 @@ def quiz_maker(ps, cat):
     s = select([rus_words])
     result = conn.execute(s)
 
-    d = sorting(result, ps, cat)
+    d = func(result, ps, cat)
     #i = 1
     newd = {}
     for key in d:#{'1d':[['лол', 'lol'], ['шта', 'wut']]}
@@ -105,7 +119,8 @@ def quizes_page():
 def vocab_nouns():
     ps = 's'
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
-    session['questions_n'] = quiz_maker(ps,cat)
+    session['questions_n'] = quiz_maker(ps,cat, sorting)
+    session['quest_b_n'] = quiz_maker(ps, cat, sorting_back)
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
@@ -316,7 +331,8 @@ def test_pl_tantum():
 def vocab_verbs():
     ps = 'v'
     cat = ['1_productif', '1_sans_diff', '1_avec_diff', '1_base_altern', '2_productif', '2_improductif']
-    session['questions_v'] = quiz_maker(ps, cat)
+    session['questions_v'] = quiz_maker(ps, cat, sorting)
+    session['quest_b_v'] = quiz_maker(ps, cat, sorting_back)
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
@@ -518,7 +534,8 @@ def test_2_improductif():
 def vocab_adverbs():
     ps = 'adv'
     cat = ['adv']
-    session['questions_adv'] = quiz_maker(ps, cat)
+    session['questions_adv'] = quiz_maker(ps, cat, sorting)
+    session['quest_b_adv'] = quiz_maker(ps, cat, sorting_back)
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
@@ -554,6 +571,39 @@ def test_adv():
             return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
 
         return render_template("test_page.html",
+                               question=questions_adv["adv"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='adv')
+    except NameError:
+        redirect(url_for('vocab_adverbs'))
+
+
+@app.route('/materials/testb_adv', methods=['GET', 'POST'])
+def testb_adv():
+    questions_adv = session['quest_b_adv']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer != questions_adv["adv"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_adv["adv"][session["current_question"]]["answer"],
+                      "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_adv:
+                    redirect(url_for('test_adv'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_adv["adv"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+
+        return render_template("test_backw.html",
                                question=questions_adv["adv"][session["current_question"]]["question"],
                                question_number=session["current_question"],
                                profile_refer=profile_refer, quizes_refer=quizes_refer, cat='adv')
