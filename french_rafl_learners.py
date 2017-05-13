@@ -325,6 +325,197 @@ def test_pl_tantum():
     except NameError:
         redirect(url_for('vocab_nouns'))
 
+
+@app.route('/materials/testb_1d', methods=['GET', 'POST'])
+def testb_1d():
+    questions_n = session['quest_b_n']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') != questions_n["1d"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_n["1d"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_n:
+                    redirect(url_for('testb_1d'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_n["1d"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_backw.html",
+                               question=questions_n["1d"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='1d')
+    except NameError:
+        redirect(url_for('vocab_nouns'))
+
+
+@app.route('/materials/testb_m', methods=['GET', 'POST'])
+def testb_m():
+    questions_n = session['quest_b_n']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') != questions_n["m"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_n["m"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_n:
+                    redirect(url_for('testb_m'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_n["m"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_backw.html",
+                               question=questions_n["m"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='m')
+    except NameError:
+        redirect(url_for('vocab_nouns'))
+
+
+@app.route('/materials/testb_n', methods=['GET', 'POST'])
+def testb_n():
+    questions_n = session['quest_b_n']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') == questions_n["n"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_n["n"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_n:
+                    redirect(url_for('testb_n'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_n["n"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_backw.html",
+                               question=questions_n["n"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='n')
+    except NameError:
+        redirect(url_for('vocab_nouns'))
+
+
+@app.route('/materials/testb_3d', methods=['GET', 'POST'])
+def testb_3d():
+    questions_n = session['quest_b_n']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') != questions_n["3d"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_n["3d"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_n:
+                    redirect(url_for('testb_3d'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_n["3d"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_backw.html",
+                               question=questions_n["3d"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='3d')
+    except NameError:
+        redirect(url_for('vocab_nouns'))
+
+
+@app.route('/materials/testb_sg_tantum', methods=['GET', 'POST'])
+def testb_sg_tantum():
+    questions_n = session['quest_b_n']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') != questions_n["sg_tantum"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_n["sg_tantum"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_n:
+                    redirect(url_for('testb_sg_tantum'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_n["sg_tantum"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_backw.html",
+                               question=questions_n["sg_tantum"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='sg_tantum')
+    except NameError:
+        redirect(url_for('vocab_nouns'))
+
+
+@app.route('/materials/testb_pl_tantum', methods=['GET', 'POST'])
+def testb_pl_tantum():
+    questions_n = session['quest_b_n']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') != questions_n["pl_tantum"][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions_n["pl_tantum"][session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions_n:
+                    redirect(url_for('testb_pl_tantum'))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions_n["pl_tantum"]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+        return render_template("test_backw.html",
+                               question=questions_n["pl_tantum"][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='pl_tantum')
+    except NameError:
+        redirect(url_for('vocab_nouns'))
+
 """-------------------------------------------------------------------------------------------"""
 
 @app.route('/materials/vocab_verbs')
