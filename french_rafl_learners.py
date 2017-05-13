@@ -14,7 +14,7 @@ app.secret_key = os.urandom(24)
 
 
 def voc_maker(ps, categories):
-    print('vocmaker ON')
+    #print('vocmaker ON')
     class Words(object):
         pass
 
@@ -29,12 +29,12 @@ def voc_maker(ps, categories):
     result = conn.execute(s)
 
     d = sorting(result, ps, categories)
-    print('vocmaker OFF\n', d)
+    #print('vocmaker OFF\n', d)
     return d
 
 
 def sorting(data, ps, categories):
-    print('sorting')
+    #print('sorting')
     d = {}
     for row in data:
         if row['part_of_speech'] == ps:
@@ -43,12 +43,12 @@ def sorting(data, ps, categories):
                     if category not in d:
                         d[category] = []
                     d[category].append([row['Rus'], row['Fran']])
-    print('sorted')
+    #print('sorted')
     return d
 
 
 def sorting_back(data, ps, categories):
-    print('sorting')
+    #print('sorting')
     d = {}
     for row in data:
         if row['part_of_speech'] == ps:
@@ -57,12 +57,12 @@ def sorting_back(data, ps, categories):
                     if category not in d:
                         d[category] = []
                     d[category].append([row['Fran'], row['Rus']])
-    print('sorted')
+    #print('sorted')
     return d
 
 
 def quiz_maker(ps, cat, func):
-    print('quizmaker ON')
+    #print('quizmaker ON')
     class Words(object):
         pass
     db_path = 'vocabulary.db'
@@ -90,7 +90,7 @@ def quiz_maker(ps, cat, func):
             i += 1
             newd[key] = quests
     #{ cat : [ 1 : {"question": row[0], "answer": row[1]}, 2 : {"question": row[0], "answer": row[1]} }]
-    print('quizmaker OFF')
+    #print('quizmaker OFF')
     return newd
 
 
@@ -588,7 +588,9 @@ def testb_adv():
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions_adv["adv"][session["current_question"]]["answer"]:
+            elif entered_answer.replace('́', '&#769;') != questions_adv["adv"][session["current_question"]]["answer"]:
+                #print(html.unescape(entered_answer))
+                #print(html.escape(entered_answer))
                 flash("La bonne réponse:\n" + questions_adv["adv"][session["current_question"]]["answer"],
                       "error")
             else:
