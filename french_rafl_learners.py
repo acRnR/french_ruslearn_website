@@ -11,30 +11,34 @@ import html
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+# todo: сделать собирание тестов на более раннем этапе
+# todo: функции однотипных страниц тестов сделать одной с переменным именем теста
 
 
-def voc_maker(ps, categories):
-    #print('vocmaker ON')
+def call_db(tbl):
     class Words(object):
         pass
-
     db_path = 'vocabulary.db'
     engine = create_engine('sqlite:///%s' % db_path, echo=False)
     metadata = MetaData(engine)
-    rus_words = Table('rus_words', metadata, autoload=True)
-    mapper(Words, rus_words)
+    need = Table(tbl, metadata, autoload=True)
+    mapper(Words, need)
     sessionmaker(bind=engine)
     conn = engine.connect()
-    s = select([rus_words])
+    s = select([need])
     result = conn.execute(s)
+    return result
 
+
+def voc_maker(ps, categories):
+    result = call_db('rus_words')
     d = sorting(result, ps, categories)
     #print('vocmaker OFF\n', d)
     return d
 
 
 def sorting(data, ps, categories):
-    #print('sorting')
+    print('sorting')
     d = {}
     for row in data:
         if row['part_of_speech'] == ps:
@@ -43,12 +47,12 @@ def sorting(data, ps, categories):
                     if category not in d:
                         d[category] = []
                     d[category].append([row['Rus'], row['Fran']])
-    #print('sorted')
+    print('sorted')
     return d
 
 
 def sorting_back(data, ps, categories):
-    #print('sorting')
+    print('sorting')
     d = {}
     for row in data:
         if row['part_of_speech'] == ps:
@@ -57,47 +61,28 @@ def sorting_back(data, ps, categories):
                     if category not in d:
                         d[category] = []
                     d[category].append([row['Fran'], row['Rus']])
-    #print('sorted')
+    print('sorted')
     return d
 
 
-def quiz_genpl_maker():
-    class Words(object):
-        pass
-    db_path = 'vocabulary.db'
-    engine = create_engine('sqlite:///%s' % db_path, echo=False)
-    metadata = MetaData(engine)
-    rus_words = Table('rus_words', metadata, autoload=True)
-    mapper(Words, rus_words)
-    sessionmaker(bind=engine)
-    conn = engine.connect()
-    s = select([s_decl])
-    result = conn.execute(s)
-
-    d = {}
-    arr = ['много ', 'мало ', 'не осталось']
+def ex_genpl_maker():
+    result = call_db('s_decl')
+    d = []
+    arr = ['Много ...', 'Мало ...', 'Не осталось ...', 'Не хватает ...']
     for row in result:
         if row['gen_pl'] != '' and row['gen_pl'] is not None:
-            d[row['nom_sg']] = [random.choice(arr), row['gen_pl']]
+            d.append([str(random.choice(arr)) + ' (' + row['nom_sg'] + ')', row['gen_pl']])
     return d
-
 
 
 def quiz_maker(ps, cat, func):
     #print('quizmaker ON')
-    class Words(object):
-        pass
-    db_path = 'vocabulary.db'
-    engine = create_engine('sqlite:///%s' % db_path, echo=False)
-    metadata = MetaData(engine)
-    rus_words = Table('rus_words', metadata, autoload=True)
-    mapper(Words, rus_words)
-    sessionmaker(bind=engine)
-    conn = engine.connect()
-    s = select([rus_words])
-    result = conn.execute(s)
-
-    #i = 1
+    result = call_db('rus_words')
+    d = func(result, ps, cat)
+    if '1d' not in d:
+        print('kek')
+    else:
+        print(d['1d'])
     newd = {}
     for key in d:#{'1d':[['лол', 'lol'], ['шта', 'wut']]}
         #qs = {}
@@ -106,12 +91,11 @@ def quiz_maker(ps, cat, func):
         i = 1
         for row in quiz_mater:
             quests[str(i)] = {"question": row[0], "answer": row[1]}
-
-            #qs.append(quests)
             i += 1
             newd[key] = quests
     #{ cat : [ 1 : {"question": row[0], "answer": row[1]}, 2 : {"question": row[0], "answer": row[1]} }]
     #print('quizmaker OFF')
+    #print(newd)
     return newd
 
 
@@ -123,6 +107,7 @@ def profile_page():
     n_v = url_for('vocab_nouns')
     v_v = url_for('vocab_verbs')
     a_v = url_for('vocab_adverbs')
+    #session['ex_genpl'] = ex_genpl_maker()
     # todo: добавить ссылки на тесты
     return render_template('profile_page.html',
                            profile_refer=profile_refer, quizes_refer=quizes_refer, test_refer=test_refer,
@@ -140,7 +125,7 @@ def quizes_page():
 def vocab_nouns():
     ps = 's'
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
-    session['questions_n'] = quiz_maker(ps,cat, sorting)
+    session['questions_n'] = quiz_maker(ps, cat, sorting)
     session['quest_b_n'] = quiz_maker(ps, cat, sorting_back)
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
@@ -1013,10 +998,10 @@ def testb_adv():
 
 """----------------------------------------------------------------------------------------------------"""
 #todo: допеределать под грамматическое задание
-@app.route('/materials/test_gen')
+@app.route('/exam/genpl')
 def test_gen():
-    #questions_adv = session['quest_b_adv']
-    questions = session['quest_genpl']
+    # questions_adv = session['quest_b_adv']
+    questions = session['ex_genpl']
     try:
         profile_refer = url_for('profile_page')
         quizes_refer = url_for('quizes_page')
@@ -1024,12 +1009,12 @@ def test_gen():
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer.replace('́', '&#769;') != questions["adv"][session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions_adv["adv"][session["current_question"]]["answer"],
+            elif entered_answer.replace('́', '&#769;') != questions[""][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions[""][session["current_question"]]["answer"],
                       "error")
             else:
                 session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions_adv:
+                if session["current_question"] in questions:
                     redirect(url_for('test_adv'))
                 else:
                     return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
@@ -1050,6 +1035,6 @@ def test_gen():
 #def keyboard():
  #   return render_template('keyboard.html')
 
-
+ex_genpl_maker()
 if __name__ == '__main__':
     app.run(debug=True)
