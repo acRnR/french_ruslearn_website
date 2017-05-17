@@ -28,6 +28,11 @@
         <tr>
             <th colspan="3"><a href="{{ 'testb_'+cat }}">Traduire en russe</a> </th>
         </tr>
+            {% if vocab_category == 'Le Substantif' and cat != 'sg_tantum' %}
+            <tr>
+            <th colspan="3"><a href="{{ 'genpl_' + cat }}">Génitif pluriel</a> </th>
+            </tr>
+            {% endif %}
         <tr>
             <th scope="col">en russe</th>
             <th scope="col">en français</th>

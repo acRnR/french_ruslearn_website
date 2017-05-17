@@ -64,13 +64,28 @@ def sorting_back(data, ps, categories):
     return d
 
 
+def genpl_sorting(data, ps, categories):
+    forms = ex_genpl_maker()
+    d = {}
+    for row in data:
+        if row['part_of_speech'] == ps:
+            for category in categories:
+                if row['category'] == category or row['extra_info'] == category:
+                    if category not in d:
+                        d[category] = []
+                    if row['Rus'] in forms:
+                        d[category].append([forms[row['Rus']][0], forms[row['Rus']][1]])
+    # print('sorted')
+    return d
+
+
 def ex_genpl_maker():
     result = call_db('s_decl')
-    d = []
+    d = {}
     arr = ['Много ...', 'Мало ...', 'Не осталось ...', 'Не хватает ...']
     for row in result:
         if row['gen_pl'] != '' and row['gen_pl'] is not None:
-            d.append([str(random.choice(arr)) + ' (' + row['nom_sg'] + ')', row['gen_pl']])
+            d[row['nom_sg']] = [str(random.choice(arr)) + ' (' + row['nom_sg'] + ')', row['gen_pl']]
     return d
 
 
@@ -78,24 +93,24 @@ def quiz_maker(ps, cat, func):
     #print('quizmaker ON')
     result = call_db('rus_words')
     d = func(result, ps, cat)
-    #if '1d' not in d:
-        #print('kek')
-    #else:
-     #   print(d['1d'])
     newd = {}
     for key in d:#{'1d':[['лол', 'lol'], ['шта', 'wut']]}
-        #qs = {}
-        quiz_mater = random.sample(d[key], 5)
-        quests = {}
-        i = 1
-        for row in quiz_mater:
-            quests[str(i)] = {"question": row[0], "answer": row[1]}
-            i += 1
-            newd[key] = quests
+        try:
+            quiz_mater = random.sample(d[key], 5)
+            quests = {}
+            i = 1
+            for row in quiz_mater:
+                quests[str(i)] = {"question": row[0], "answer": row[1]}
+                i += 1
+                newd[key] = quests
+        except ValueError:
+            print(key)
+            continue
     #{ cat : [ 1 : {"question": row[0], "answer": row[1]}, 2 : {"question": row[0], "answer": row[1]} }]
     #print('quizmaker OFF')
     #print(newd)
     return newd
+"""-------------------------------------------------------------------------"""
 
 
 @app.route('/')
@@ -192,6 +207,41 @@ def testb(categ):
                                profile_refer=profile_refer, quizes_refer=quizes_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_nouns'))
+
+#todo: добавить подсказки правил
+@app.route('/materials/genpl_<categ>', methods=['GET', 'POST'])
+def test_gen(categ):
+    # questions_adv = session['quest_b_adv']
+    questions = session['ex_genpl']
+    try:
+        profile_refer = url_for('profile_page')
+        quizes_refer = url_for('quizes_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer.replace('́', '&#769;') != questions[categ][session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions[categ][session["current_question"]]["answer"],
+                      "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions:
+                    redirect(url_for('genpl_', categ=categ))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions[categ]:
+            session.pop("current_question")
+            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
+
+        return render_template("test_gen.html",
+                               question=questions[categ][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat=categ)
+    except NameError:
+        redirect(url_for('vocab_adverbs'))
+
 """------------------------------------------------------------------------"""
 
 
@@ -201,6 +251,7 @@ def vocab_nouns():
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
     session['questions_n'] = quiz_maker(ps, cat, sorting)
     session['quest_b_n'] = quiz_maker(ps, cat, sorting_back)
+    session['ex_genpl'] = quiz_maker(ps, cat, genpl_sorting)
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     quizes_refer = url_for('quizes_page')
@@ -240,40 +291,6 @@ def vocab_adverbs():
                            profile_refer=profile_refer, quizes_refer=quizes_refer,# test_refer=test_refer,
                            mama=cat, voc=voc, vocab_category="L'Adverbe")
 
-
-#todo: допеределать под грамматическое задание
-@app.route('/exam/genpl')
-def test_gen():
-    # questions_adv = session['quest_b_adv']
-    questions = session['ex_genpl']
-    try:
-        profile_refer = url_for('profile_page')
-        quizes_refer = url_for('quizes_page')
-        if request.method == "POST":
-            entered_answer = request.form.get('answer', '')
-            if not entered_answer:
-                flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer.replace('́', '&#769;') != questions[""][session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions[""][session["current_question"]]["answer"],
-                      "error")
-            else:
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
-                    redirect(url_for('test_adv'))
-                else:
-                    return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=0)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        elif session["current_question"] not in questions_adv["adv"]:
-            session.pop("current_question")
-            return render_template("success.html", profile_refer=profile_refer, quizes_refer=quizes_refer, a=1)
-
-        return render_template("test_backw.html",
-                               question=questions_adv["adv"][session["current_question"]]["question"],
-                               question_number=session["current_question"],
-                               profile_refer=profile_refer, quizes_refer=quizes_refer, cat='adv')
-    except NameError:
-        redirect(url_for('vocab_adverbs'))
 
 #@app.route('/keyboard')
 #def keyboard():
