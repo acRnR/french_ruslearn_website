@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <script type="text/javascript" src="/keyboard.js" charset="UTF-8"></script>
+    <link rel="stylesheet" type="text/css" href="/keyboard.css">
     <meta charset="UTF-8">
     <title>Тест</title>
 </head>
@@ -26,7 +28,7 @@
           <span class="col-lg-2">{{ question_number }}. {{ question|safe }}</span>
           <div class="col-lg-2">
             <input type="text" name="answer" placeholder="Answer"
-                   class="form-control">
+                   class="form-control keyboardInput">
           </div>
         <input type="submit" class="btn btn-primary" value="Submit">
         </div>

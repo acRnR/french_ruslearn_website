@@ -9,7 +9,7 @@ from sqlalchemy.sql import select
 import html
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 app.secret_key = os.urandom(24)
 # todo: сделать собирание тестов на более раннем этапе
 
@@ -294,7 +294,7 @@ def vocab_adverbs():
 
 #@app.route('/keyboard')
 #def keyboard():
- #   return render_template('keyboard.html')
+ #   return render_template('keyb.html')
 
 ex_genpl_maker()
 if __name__ == '__main__':
