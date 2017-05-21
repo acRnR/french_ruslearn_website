@@ -11,7 +11,6 @@ from sqlalchemy.sql import select
 app = Flask(__name__, static_url_path='')
 
 app.secret_key = os.urandom(24)
-# todo: сделать собирание тестов на более раннем этапе
 
 
 def distance(a, b):
@@ -52,12 +51,10 @@ def call_db(tbl):
 def voc_maker(ps, categories):
     result = call_db('rus_words')
     d = sorting(result, ps, categories)
-    #print('vocmaker OFF\n', d)
     return d
 
 
 def sorting(data, ps, categories, f=None):
-    #print('sorting')
     d = {}
     for row in data:
         if row['part_of_speech'] == ps:
@@ -66,12 +63,10 @@ def sorting(data, ps, categories, f=None):
                     if category not in d:
                         d[category] = []
                     d[category].append([row['Rus'], row['Fran']])
-    #print('sorted')
     return d
 
 
 def sorting_back(data, ps, categories, f=None):
-    #print('sorting')
     d = {}
     for row in data:
         if row['part_of_speech'] == ps:
@@ -80,7 +75,6 @@ def sorting_back(data, ps, categories, f=None):
                     if category not in d:
                         d[category] = []
                     d[category].append([row['Fran'], row['Rus']])
-    #print('sorted')
     return d
 
 
@@ -121,7 +115,6 @@ def prs_conj_maker():
 
 
 def quiz_maker(ps, cat, sorter, func=None):
-    #print('quizmaker ON')
     result = call_db('rus_words')
     d = sorter(result, ps, cat, func)
     newd = {}
@@ -135,11 +128,8 @@ def quiz_maker(ps, cat, sorter, func=None):
                 i += 1
                 newd[key] = quests
         except ValueError:
-            print(key)
             continue
     #{ cat : [ 1 : {"question": row[0], "answer": row[1]}, 2 : {"question": row[0], "answer": row[1]} }]
-    #print('quizmaker OFF')
-    #print(newd)
     return newd
 """-------------------------------------------------------------------------"""
 
@@ -157,14 +147,9 @@ def profile_page():
     return render_template('profile_page.html',
                            profile_refer=profile_refer,# quizes_refer=quizes_refer,#test_refer=test_refer,
                            noun_voc=n_v, verb_voc=v_v, adv_voc=a_v)
-
-
-#@app.route('/quizes')
-#def quizes():
- #   return render_template('quizez.html')
 """-------------------------------------------------------------------------"""
 
-
+# todo: выводить в конце квиза ошибки
 @app.route('/materials/quiz_<categ>', methods=['GET', 'POST'])
 def quizes_page(categ):
     cs = {
@@ -183,11 +168,8 @@ def quizes_page(categ):
             else:
                 dist = distance(entered_answer, questions[categ][session["current_question"]]["answer"])
                 if dist == 0:
-                    print('y')
                     session['mark'] += 1
-                    print(session['mark'])
                 elif dist == 1:
-                    print('yy')
                     session['mark'] += (1/2)
                 else:
                     print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
@@ -521,10 +503,6 @@ def vocab_adverbs():
                            profile_refer=profile_refer,
                            mama=cat, voc=voc, vocab_category="L'Adverbe")
 
-
-#@app.route('/keyboard')
-#def keyboard():
- #   return render_template('keyb.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
