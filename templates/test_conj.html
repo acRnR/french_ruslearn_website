@@ -1,8 +1,5 @@
-<!DOCTYPE html>
 <html lang="fr">
 <head>
-    <!--script type="text/javascript" src="/keyboard.js" charset="UTF-8"></script>
-    <link rel="stylesheet" type="text/css" href="/keyboard.css"-->
     <meta charset="UTF-8">
     <title>Тест</title>
 </head>
@@ -15,7 +12,7 @@
 
  <div class="container">
       <div class="header">
-        <h3 class="text-muted">Traduisez-le en russe</h3>
+        <h3 class="text-muted">Mettez-le dans une forme propre</h3>
       </div>
       <hr/>
       {% for category, message in get_flashed_messages(with_categories=true) %}
@@ -23,12 +20,12 @@
         {{ message|safe }}
       </div>
       {% endfor %}
-      <form class="form" action="/materials/testb_{{ cat }}" method="post">
+      <form class="form" action="/materials/conj_{{ cat }}" method="post">
         <div class="form-group">
           <span class="col-lg-2">{{ question_number }}. {{ question|safe }}</span>
           <div class="col-lg-2">
             <input type="text" name="answer" placeholder="Answer"
-                   class="form-control"><!-- keyboardInput"-->
+                   class="form-control">
           </div>
         <input type="submit" class="btn btn-primary" value="Submit">
         </div>
