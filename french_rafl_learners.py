@@ -6,16 +6,18 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.sql import select
-import html
 
 
 app = Flask(__name__, static_url_path='')
+
 app.secret_key = os.urandom(24)
 # todo: сделать собирание тестов на более раннем этапе
 
 
 def distance(a, b):
     # "Calculates the Levenshtein distance between a and b."
+    a = a.replace('&#769;', '́')
+    b = b.replace('&#769;', '́')
     n, m = len(a), len(b)
     if n > m:
         # Make sure n <= m, to use O(min(n,m)) space
@@ -157,7 +159,13 @@ def profile_page():
                            noun_voc=n_v, verb_voc=v_v, adv_voc=a_v)
 
 
-@app.route('/quiz_<categ>', methods=['GET', 'POST'])
+#@app.route('/quizes')
+#def quizes():
+ #   return render_template('quizez.html')
+"""-------------------------------------------------------------------------"""
+
+
+@app.route('/materials/quiz_<categ>', methods=['GET', 'POST'])
 def quizes_page(categ):
     cs = {
         '1d': 'n', 'm': 'n', 'n': 'n', '3d': 'n', 'sg_tantum': 'n', 'pl_tantum': 'n',
@@ -203,7 +211,7 @@ def quizes_page(categ):
         redirect(url_for('vocab_verbs'))
 
 
-@app.route('/quizb_<categ>', methods=['GET', 'POST'])
+@app.route('/materials/quizb_<categ>', methods=['GET', 'POST'])
 def quizb_page(categ):
     cs = {
         '1d': 'n', 'm': 'n', 'n': 'n', '3d': 'n', 'sg_tantum': 'n', 'pl_tantum': 'n',
@@ -219,7 +227,7 @@ def quizb_page(categ):
             if not entered_answer:
                 flash("Please enter an answer", "error")
             else:
-                dist = distance(entered_answer.replace('́', '&#769;'), questions[categ][session["current_question"]]["answer"])
+                dist = distance(entered_answer, questions[categ][session["current_question"]]["answer"])
                 if dist == 0:
                     session['mark'] += 1
                 elif dist == 1:
@@ -239,6 +247,80 @@ def quizb_page(categ):
             session.pop("current_question")
             return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark)
         return render_template("quizes_backw.html",
+                               question=questions[categ][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, cat=categ)
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+
+@app.route('/materials/qgenpl_<categ>', methods=['GET', 'POST'])
+def qgenpl(categ):
+    questions = session['qgenpl']
+    try:
+        profile_refer = url_for('profile_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")
+            else:
+                dist = distance(entered_answer, questions[categ][session["current_question"]]["answer"])
+                if dist == 0:
+                    session['mark'] += 1
+                elif dist == 1:
+                    session['mark'] += (1/2)
+                else:
+                    print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions:
+                    redirect(url_for('qgenpl', categ=categ))
+                else:
+                    return render_template("q_success.html", profile_refer=profile_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions[categ]:
+            mark = session['mark']
+            session['mark'] = 0
+            session.pop("current_question")
+            return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark)
+        return render_template("quiz_genpl.html",
+                               question=questions[categ][session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, cat=categ)
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+
+@app.route('/materials/qconj_<categ>', methods=['GET', 'POST'])
+def qconj(categ):
+    questions = session['qconj']
+    try:
+        profile_refer = url_for('profile_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")
+            else:
+                dist = distance(entered_answer, questions[categ][session["current_question"]]["answer"])
+                if dist == 0:
+                    session['mark'] += 1
+                elif dist == 1:
+                    session['mark'] += (1/2)
+                else:
+                    print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions:
+                    redirect(url_for('qconj', categ=categ))
+                else:
+                    return render_template("q_success.html", profile_refer=profile_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions[categ]:
+            mark = session['mark']
+            session['mark'] = 0
+            session.pop("current_question")
+            return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark)
+        return render_template("quiz_conj.html",
                                question=questions[categ][session["current_question"]]["question"],
                                question_number=session["current_question"],
                                profile_refer=profile_refer, cat=categ)
@@ -396,7 +478,9 @@ def vocab_nouns():
     session['mark'] = 0
     session['quiz_n'] = quiz_maker(ps, cat, sorting)
     session['questions_n'] = quiz_maker(ps, cat, sorting)
+    session['quizb_n'] = quiz_maker(ps, cat, sorting_back)
     session['quest_b_n'] = quiz_maker(ps, cat, sorting_back)
+    session['qgenpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     session['ex_genpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
@@ -412,7 +496,9 @@ def vocab_verbs():
     session['mark'] = 0
     session['quiz_v'] = quiz_maker(ps, cat, sorting)
     session['questions_v'] = quiz_maker(ps, cat, sorting)
+    session['quizb_v'] = quiz_maker(ps, cat, sorting_back)
     session['quest_b_v'] = quiz_maker(ps, cat, sorting_back)
+    session['qconj'] = quiz_maker(ps, cat, gramm_sorting, prs_conj_maker)
     session['ex_conj'] = quiz_maker(ps, cat, gramm_sorting, prs_conj_maker)
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
@@ -427,6 +513,7 @@ def vocab_adverbs():
     cat = ['adv']
     session['quiz_adv'] = quiz_maker(ps, cat, sorting)
     session['questions_adv'] = quiz_maker(ps, cat, sorting)
+    session['quizb_adv'] = quiz_maker(ps, cat, sorting_back)
     session['quest_b_adv'] = quiz_maker(ps, cat, sorting_back)
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')

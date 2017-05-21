@@ -8,37 +8,47 @@
 <body>
 <ul class="menu-main">
   <li><a href="{{ profile_refer }}">Личный кабинет</a></li>
-  <li><a href="{{ quizes_refer }}">Контрольные</a></li>
+  <!--li><a href="{{ quizes_refer }}">Контрольные</a></li-->
   <li><a href="{{ return_refer }}">Выйти</a></li>
 </ul>
 <h1>{{ vocab_category }}</h1>
-<div class="vocabulary">
+<div class="test-links">
     <table>
-        <!--<thead>
-        <tr>
-            <th scope="col" colspan="2">Lexique</th>
-            <th scope="col">Tests</th>
-        </tr>
-        </thead>-->
         <tbody>
         {% for cat in mama %}
         <tr>
-            <th colspan="3"><a href="{{ 'test_'+cat }}">Traduire en français</a> </th>
+            <th>Traduire en français</th>
+            <td><a href="{{ 'test_'+cat }}">test</a> </td>
+            <td><a href="{{ 'quiz_'+cat }}">quiz</a> </td>
         </tr>
         <tr>
-            <th colspan="3"><a href="{{ 'testb_'+cat }}">Traduire en russe</a> </th>
+            <th>Traduire en russe</th>
+            <td><a href="{{ 'testb_'+cat }}">test</a> </td>
+            <td><a href="{{ 'quizb_'+cat }}">quiz</a> </td>
         </tr>
-            <tr>
-            {% if vocab_category == 'Le Substantif' and cat != 'sg_tantum' %}
-            <th colspan="3"><a href="{{ 'genpl_' + cat }}">Génitif pluriel</a> </th>
-            {% elif vocab_category == 'Le Verbe' %}
-            <th colspan="3"><a href="{{ 'conj_' + cat }}">Conjugation présent</a> </th>
-            {% endif %}
-            </tr>
         <tr>
+        {% if vocab_category == 'Le Substantif' and cat != 'sg_tantum' %}
+            <th>Génitif pluriel</th>
+            <td><a href="{{ 'genpl_' + cat }}">test</a> </td>
+            <td><a href="{{ 'qgenpl_' + cat }}">quiz</a> </td>
+        {% elif vocab_category == 'Le Verbe' %}
+            <th>Conjugation présent</th>
+            <td><a href="{{ 'conj_' + cat }}">test</a> </td>
+            <td><a href="{{ 'qconj_' + cat }}">quiz</a> </td>
+        {% endif %}
+        </tr>
+    </table>
+</div>
+<div class="vocabulaire">
+    <h2>Le Vocabulaire</h2>
+    <table>
+        <thead>
+          <tr>
             <th scope="col">en russe</th>
             <th scope="col">en français</th>
-        </tr>
+          </tr>
+        </thead>
+        <tbody>
             {% for el in voc[cat] %}
         <tr>
             <td>{{ el[0]|safe }}</td>
@@ -49,7 +59,5 @@
         </tbody>
     </table>
 </div>
-
-<a href="{{ test_refer }}">Тест</a>
 </body>
 </html>

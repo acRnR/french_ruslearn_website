@@ -12,7 +12,7 @@
 </ul-->
 <div class="container">
     <div class="header">
-        <h3 class="text-muted">Traduisez-le en français</h3>
+        <h3 class="text-muted">Mettez le verbe dans une forme propre</h3>
     </div>
     <hr/>
     {% for category, message in get_flashed_messages(with_categories=true) %}
@@ -20,7 +20,7 @@
         {{ message }}
     </div>
     {% endfor %}
-    <form class="form" action="/materials/quiz_{{ cat }}" method="post">
+    <form class="form" action="/materials/qconj_{{ cat }}" method="post">
     <div class="form-group">
         <span class="col-lg-2">{{ question_number }}. {{ question|safe }}</span>
         <div class="col-lg-2">
