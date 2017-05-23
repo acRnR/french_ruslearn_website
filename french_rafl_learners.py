@@ -608,6 +608,7 @@ def vocab_verbs():
 def vocab_adverbs():
     ps = 'adv'
     cat = ['adv']
+    session['mark'] = 0
     session['quiz_adv'] = quiz_maker(ps, cat, sorting)
     session['questions_adv'] = quiz_maker(ps, cat, sorting)
     session['quizb_adv'] = quiz_maker(ps, cat, sorting_back)
