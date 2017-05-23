@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Title_french</title>
+</head>
+
+<body>
+
+<form action="" method=post>
+  <dl>
+      <dt>Identifiant:</dt>
+      <dd><input type=text name=username></dd>
+      <dt>Mot de passe:</dt>
+      <dd><input type=password name=password></dd>
+  </dl>
+  <p>
+    <input type=submit value=Entrer>
+    <input type=hidden value="{{ next or '' }}" name=next>
+</form>
+<a href="sign_up_page.html">Créer mon compte</a>
+</body>
+</html>

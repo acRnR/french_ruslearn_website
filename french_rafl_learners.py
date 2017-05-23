@@ -1,16 +1,57 @@
 import os
 import random
-from flask import Flask
+from flask import Flask, Response, abort
 from flask import url_for, render_template, request, redirect, flash, session
-from flask.ext.sqlalchemy import SQLAlchemy
+#from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
+from flask_sqlalchemy import SQLAlchemy
+from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
 from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.sql import select
+
+"""------------------------------------------------------------------------------"""
 
 
 app = Flask(__name__, static_url_path='')
 
 app.secret_key = os.urandom(24)
+app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = 'super-secret'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+
+db = SQLAlchemy(app)
+
+roles_users = db.Table('roles_users',
+        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+        db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
+
+class Role(db.Model, RoleMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255), unique=True)
+    password = db.Column(db.String(255))
+    active = db.Column(db.Boolean())
+    confirmed_at = db.Column(db.DateTime())
+    roles = db.relationship('Role', secondary=roles_users,
+                            backref=db.backref('users', lazy='dynamic'))
+
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(app, user_datastore)
+
+# Create a user to test with
+@app.before_first_request
+def create_user():
+    db.create_all()
+    user_datastore.create_user(email='matt@nobien.net', password='password')
+    db.session.commit()
+
+
+
+"""------------------------------------------------------------------------------"""
 
 
 def distance(a, b):
@@ -134,7 +175,68 @@ def quiz_maker(ps, cat, sorter, func=None):
 """-------------------------------------------------------------------------"""
 
 
+#@login_manager.user_loader
+#def load_user(uid):
+ #   return User.query.get(int(uid))
+
+#class User(db.Model):
+ #   __tablename__ = "users"
+  #  id = db.Column('user_id', db.Integer, primary_key=True)
+   # username = db.Column('username', db.String(20), unique=True, index=True)
+    #password = db.Column('password', db.String(10))
+    #email = db.Column('email', db.String(50), unique=True, index=True)
+#    registered_on = db.Column('registered_on', db.DateTime)
+
+#    def __init__(self, username, password, email):
+ #       self.username = username
+  #      self.password = password
+   #     self.email = email
+    #    self.registered_on = datetime.utcnow()
+
+#    def is_authenticated(self):
+ #       return True
+
+#    def is_active(self):
+ #       return True
+
+#    def is_anonymous(self):
+ #       return False
+
+  #  def get_id(self):
+   #     return unicode(self.id)
+
+#    def __repr__(self):
+ #       return '<User %r>' % (self.username)
+
+"""-------------------------------------------------------------------"""
+
+
+#@app.route('/signup')
+#def sign_up():
+ #   #if request.args:
+  #   #   return redirect(pass)
+   # render_template('sign_up_page.html')
+
+
+
+
+
+# somewhere to logout
+#@app.route("/logout")
+#@login_required
+#def logout():
+ #  logout_user()
+  # return Response('<p>Logged out</p>')
+
+
+# handle login failed
+#@app.errorhandler(401)
+#def page_not_found(e):
+ #   return Response('<p>Login failed</p>')
+
+
 @app.route('/')
+@login_required
 def profile_page():
     profile_refer = url_for('profile_page')
     #quizes_refer = url_for('quizes_page')
@@ -151,6 +253,7 @@ def profile_page():
 
 # todo: выводить в конце квиза ошибки
 @app.route('/materials/quiz_<categ>', methods=['GET', 'POST'])
+@login_required
 def quizes_page(categ):
     cs = {
         '1d': 'n', 'm': 'n', 'n': 'n', '3d': 'n', 'sg_tantum': 'n', 'pl_tantum': 'n',
@@ -194,6 +297,7 @@ def quizes_page(categ):
 
 
 @app.route('/materials/quizb_<categ>', methods=['GET', 'POST'])
+@login_required
 def quizb_page(categ):
     cs = {
         '1d': 'n', 'm': 'n', 'n': 'n', '3d': 'n', 'sg_tantum': 'n', 'pl_tantum': 'n',
@@ -237,6 +341,7 @@ def quizb_page(categ):
 
 
 @app.route('/materials/qgenpl_<categ>', methods=['GET', 'POST'])
+@login_required
 def qgenpl(categ):
     questions = session['qgenpl']
     try:
@@ -274,6 +379,7 @@ def qgenpl(categ):
 
 
 @app.route('/materials/qconj_<categ>', methods=['GET', 'POST'])
+@login_required
 def qconj(categ):
     questions = session['qconj']
     try:
@@ -312,6 +418,7 @@ def qconj(categ):
 
 
 @app.route('/materials/test_<categ>', methods=['GET', 'POST'])
+@login_required
 def test(categ):
     cs = {
         '1d': 'n', 'm': 'n', 'n':'n', '3d':'n', 'sg_tantum':'n', 'pl_tantum':'n',
@@ -349,6 +456,7 @@ def test(categ):
 
 
 @app.route('/materials/testb_<categ>', methods=['GET', 'POST'])
+@login_required
 def testb(categ):
     cs = {
         '1d': 'n', 'm': 'n', 'n': 'n', '3d': 'n', 'sg_tantum': 'n', 'pl_tantum': 'n',
@@ -384,8 +492,9 @@ def testb(categ):
     except NameError:
         redirect(url_for('vocab_nouns'))
 
-#todo: добавить подсказки правил
+# todo: добавить подсказки правил
 @app.route('/materials/genpl_<categ>', methods=['GET', 'POST'])
+@login_required
 def test_gen(categ):
     # questions_adv = session['quest_b_adv']
     questions = session['ex_genpl']
@@ -418,8 +527,9 @@ def test_gen(categ):
     except NameError:
         redirect(url_for('vocab_adverbs'))
 
-#todo: добавить подсказки правил
+# todo: добавить подсказки правил
 @app.route('/materials/conj_<categ>', methods=['GET', 'POST'])
+@login_required
 def test_conj(categ):
     # questions_adv = session['quest_b_adv']
     questions = session['ex_conj']
@@ -454,6 +564,7 @@ def test_conj(categ):
 
 
 @app.route('/materials/vocab_nouns')
+@login_required
 def vocab_nouns():
     ps = 's'
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
@@ -472,6 +583,7 @@ def vocab_nouns():
 
 
 @app.route('/materials/vocab_verbs')
+@login_required
 def vocab_verbs():
     ps = 'v'
     cat = ['1_productif', '1_sans_diff', '1_avec_diff', '1_base_altern', '2_productif', '2_improductif']
@@ -490,6 +602,7 @@ def vocab_verbs():
 
 
 @app.route('/materials/vocab_adverbs')
+@login_required
 def vocab_adverbs():
     ps = 'adv'
     cat = ['adv']
