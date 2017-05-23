@@ -18,6 +18,8 @@ app.secret_key = os.urandom(24)
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+app.config['SECURITY_REGISTERABLE'] = True
+
 
 db = SQLAlchemy(app)
 
