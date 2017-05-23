@@ -1,6 +1,8 @@
+import conf
 import os
 import random
 from flask import Flask, Response, abort
+from flask_mail import Mail
 from flask import url_for, render_template, request, redirect, flash, session
 #from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
@@ -11,15 +13,21 @@ from sqlalchemy.sql import select
 
 """------------------------------------------------------------------------------"""
 
+mail = Mail()
 
 app = Flask(__name__, static_url_path='')
 
 app.secret_key = os.urandom(24)
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///userinfo.db'
 app.config['SECURITY_REGISTERABLE'] = True
-
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = conf.MAILUN
+app.config['MAIL_PASSWORD'] = conf.PASSWORD
+mail.init_app(app)
 
 db = SQLAlchemy(app)
 
@@ -45,11 +53,11 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
 # Create a user to test with
-@app.before_first_request
-def create_user():
-    db.create_all()
-    user_datastore.create_user(email='matt@nobien.net', password='password')
-    db.session.commit()
+#@app.before_first_request
+#def create_user():
+ #   db.create_all()
+  #  user_datastore.create_user(email='matt@nobien.net', password='password')
+   # db.session.commit()
 
 
 
@@ -177,64 +185,9 @@ def quiz_maker(ps, cat, sorter, func=None):
 """-------------------------------------------------------------------------"""
 
 
-#@login_manager.user_loader
-#def load_user(uid):
- #   return User.query.get(int(uid))
 
-#class User(db.Model):
- #   __tablename__ = "users"
-  #  id = db.Column('user_id', db.Integer, primary_key=True)
-   # username = db.Column('username', db.String(20), unique=True, index=True)
-    #password = db.Column('password', db.String(10))
-    #email = db.Column('email', db.String(50), unique=True, index=True)
-#    registered_on = db.Column('registered_on', db.DateTime)
-
-#    def __init__(self, username, password, email):
- #       self.username = username
-  #      self.password = password
-   #     self.email = email
-    #    self.registered_on = datetime.utcnow()
-
-#    def is_authenticated(self):
- #       return True
-
-#    def is_active(self):
- #       return True
-
-#    def is_anonymous(self):
- #       return False
-
-  #  def get_id(self):
-   #     return unicode(self.id)
-
-#    def __repr__(self):
- #       return '<User %r>' % (self.username)
 
 """-------------------------------------------------------------------"""
-
-
-#@app.route('/signup')
-#def sign_up():
- #   #if request.args:
-  #   #   return redirect(pass)
-   # render_template('sign_up_page.html')
-
-
-
-
-
-# somewhere to logout
-#@app.route("/logout")
-#@login_required
-#def logout():
- #  logout_user()
-  # return Response('<p>Logged out</p>')
-
-
-# handle login failed
-#@app.errorhandler(401)
-#def page_not_found(e):
- #   return Response('<p>Login failed</p>')
 
 
 @app.route('/')
