@@ -3,7 +3,7 @@ import os
 import random
 from flask import Flask, Response, abort
 from flask_mail import Mail
-from flask import url_for, render_template, request, redirect, flash, session
+from flask import url_for, render_template, request, redirect, flash, session, g
 #from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
@@ -12,7 +12,7 @@ from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.sql import select
 
 """------------------------------------------------------------------------------"""
-
+sess_2 = {}
 mail = Mail()
 
 app = Flask(__name__, static_url_path='')
@@ -183,16 +183,17 @@ def quiz_maker(ps, cat, sorter, func=None):
     #{ cat : [ 1 : {"question": row[0], "answer": row[1]}, 2 : {"question": row[0], "answer": row[1]} }]
     return newd
 """-------------------------------------------------------------------------"""
-
-
-
-
+#if 'logout':
+ #   print(session)
+  #  session.clear()
+   # print('aaa', session)
 """-------------------------------------------------------------------"""
 
 
 @app.route('/')
 @login_required
 def profile_page():
+    g = session['user_id']
     profile_refer = url_for('profile_page')
     #quizes_refer = url_for('quizes_page')
     #test_refer = url_for('test_1d')
@@ -216,7 +217,7 @@ def quizes_page(categ):
         '2_improductif': 'v',
         'adv': 'adv'
     }
-    questions = session['quiz_' + cs[categ]]
+    questions = sess_2['quiz_' + cs[categ]]
     try:
         profile_refer = url_for('profile_page')
         if request.method == "POST":
@@ -260,7 +261,7 @@ def quizb_page(categ):
         '2_improductif': 'v',
         'adv': 'adv'
     }
-    questions = session['quizb_' + cs[categ]]
+    questions = sess_2['quizb_' + cs[categ]]
     try:
         profile_refer = url_for('profile_page')
         if request.method == "POST":
@@ -298,7 +299,7 @@ def quizb_page(categ):
 @app.route('/materials/qgenpl_<categ>', methods=['GET', 'POST'])
 @login_required
 def qgenpl(categ):
-    questions = session['qgenpl']
+    questions = sess_2['qgenpl']
     try:
         profile_refer = url_for('profile_page')
         if request.method == "POST":
@@ -336,7 +337,7 @@ def qgenpl(categ):
 @app.route('/materials/qconj_<categ>', methods=['GET', 'POST'])
 @login_required
 def qconj(categ):
-    questions = session['qconj']
+    questions = sess_2['qconj']
     try:
         profile_refer = url_for('profile_page')
         if request.method == "POST":
@@ -380,7 +381,7 @@ def test(categ):
         '1_productif': 'v', '1_sans_diff': 'v', '1_avec_diff': 'v', '1_base_altern': 'v', '2_productif': 'v', '2_improductif': 'v',
         'adv': 'adv'
     }
-    questions = session['questions_' + cs[categ]]
+    questions = sess_2['questions_' + cs[categ]]
     try:
         profile_refer = url_for('profile_page')
         #quizes_refer = url_for('quizes_page')
@@ -400,7 +401,7 @@ def test(categ):
         if "current_question" not in session:
             session["current_question"] = "1"
         elif session["current_question"] not in questions[categ]:
-            session.pop("current_question")
+            session.pop('current_question')
             return render_template("success.html", profile_refer=profile_refer, a=1)#quizes_refer=quizes_refer, a=1)
         return render_template("test_page.html",
                                question=questions[categ][session["current_question"]]["question"],
@@ -419,7 +420,7 @@ def testb(categ):
         '2_improductif': 'v',
         'adv': 'adv'
     }
-    questions = session['quest_b_' + cs[categ]]
+    questions = sess_2['quest_b_' + cs[categ]]
     try:
         profile_refer = url_for('profile_page')
         #quizes_refer = url_for('quizes_page')
@@ -438,21 +439,21 @@ def testb(categ):
         if "current_question" not in session:
             session["current_question"] = "1"
         elif session["current_question"] not in questions[categ]:
-            session.pop("current_question")
+            session.pop('current_question')
             return render_template("success.html", profile_refer=profile_refer, a=1)#quizes_refer=quizes_refer, a=1)
         return render_template("test_backw.html",
                                question=questions[categ][session["current_question"]]["question"],
                                question_number=session["current_question"],
                                profile_refer=profile_refer, cat=categ)#quizes_refer=quizes_refer, cat=categ)
     except NameError:
-        redirect(url_for('vocab_nouns'))
+        redirect(url_for('vocab_verbs'))
 
 # todo: добавить подсказки правил
 @app.route('/materials/genpl_<categ>', methods=['GET', 'POST'])
 @login_required
 def test_gen(categ):
     # questions_adv = session['quest_b_adv']
-    questions = session['ex_genpl']
+    questions = sess_2['ex_genpl']
     try:
         profile_refer = url_for('profile_page')
         #quizes_refer = url_for('quizes_page')
@@ -471,23 +472,22 @@ def test_gen(categ):
                     return render_template("success.html", profile_refer=profile_refer, a=0)#quizes_refer=quizes_refer, a=0)
         if "current_question" not in session:
             session["current_question"] = "1"
-        elif session["current_question"] not in questions[categ]:
-            session.pop("current_question")
+        if session["current_question"] not in questions[categ]:
+            session.pop('current_question')
             return render_template("success.html", profile_refer=profile_refer, a=1)#quizes_refer=quizes_refer, a=1)
-
         return render_template("test_gen.html",
                                question=questions[categ][session["current_question"]]["question"],
                                question_number=session["current_question"],
                                profile_refer=profile_refer, cat=categ)#quizes_refer=quizes_refer, cat=categ)
     except NameError:
-        redirect(url_for('vocab_adverbs'))
+        redirect(url_for('vocab_nouns'))
 
 # todo: добавить подсказки правил
 @app.route('/materials/conj_<categ>', methods=['GET', 'POST'])
 @login_required
 def test_conj(categ):
     # questions_adv = session['quest_b_adv']
-    questions = session['ex_conj']
+    questions = sess_2['ex_conj']
     try:
         profile_refer = url_for('profile_page')
         #quizes_refer = url_for('quizes_page')
@@ -506,8 +506,8 @@ def test_conj(categ):
                     return render_template("success.html", profile_refer=profile_refer, a=0)#quizes_refer=quizes_refer, a=0)
         if "current_question" not in session:
             session["current_question"] = "1"
-        elif session["current_question"] not in questions[categ]:
-            session.pop("current_question")
+        if session["current_question"] not in questions[categ]:
+            session.pop('current_question')
             return render_template("success.html", profile_refer=profile_refer, a=1)#quizes_refer=quizes_refer, a=1)
         return render_template("test_conj.html",
                                question=questions[categ][session["current_question"]]["question"],
@@ -521,16 +521,27 @@ def test_conj(categ):
 @app.route('/materials/vocab_nouns')
 @login_required
 def vocab_nouns():
+    if session['user_id'] == g:
+        session.permanent = True
+    #if '/security.logout':
+     #   session.clear()
     ps = 's'
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
     session['mark'] = 0
-    session['quiz_n'] = quiz_maker(ps, cat, sorting)
-    session['questions_n'] = quiz_maker(ps, cat, sorting)
-    session['quizb_n'] = quiz_maker(ps, cat, sorting_back)
-    session['quest_b_n'] = quiz_maker(ps, cat, sorting_back)
-    session['qgenpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
-    session['ex_genpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
+    sess_2['quiz_n'] = quiz_maker(ps, cat, sorting)
+    sess_2['questions_n'] = quiz_maker(ps, cat, sorting)
+    sess_2['quizb_n'] = quiz_maker(ps, cat, sorting_back)
+    sess_2['quest_b_n'] = quiz_maker(ps, cat, sorting_back)
+    sess_2['qgenpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
+    sess_2['ex_genpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     voc = voc_maker(ps, cat)
+    for el in sess_2:
+        print('\n'+el, end=' ')
+        if type(sess_2[el]) == str or type(sess_2[el]) == dict:
+            for item in sess_2[el]:
+                print(item, end=' ')
+        else:
+            print(sess_2[el], end=' ')
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
                            profile_refer=profile_refer,
@@ -540,16 +551,27 @@ def vocab_nouns():
 @app.route('/materials/vocab_verbs')
 @login_required
 def vocab_verbs():
+    if session['user_id'] == g:
+        session.permanent = True
+    #if '/security.logout':
+     #   session.clear()
     ps = 'v'
     cat = ['1_productif', '1_sans_diff', '1_avec_diff', '1_base_altern', '2_productif', '2_improductif']
     session['mark'] = 0
-    session['quiz_v'] = quiz_maker(ps, cat, sorting)
-    session['questions_v'] = quiz_maker(ps, cat, sorting)
-    session['quizb_v'] = quiz_maker(ps, cat, sorting_back)
-    session['quest_b_v'] = quiz_maker(ps, cat, sorting_back)
-    session['qconj'] = quiz_maker(ps, cat, gramm_sorting, prs_conj_maker)
-    session['ex_conj'] = quiz_maker(ps, cat, gramm_sorting, prs_conj_maker)
+    sess_2['quiz_v'] = quiz_maker(ps, cat, sorting)
+    sess_2['questions_v'] = quiz_maker(ps, cat, sorting)
+    sess_2['quizb_v'] = quiz_maker(ps, cat, sorting_back)
+    sess_2['quest_b_v'] = quiz_maker(ps, cat, sorting_back)
+    sess_2['qconj'] = quiz_maker(ps, cat, gramm_sorting, prs_conj_maker)
+    sess_2['ex_conj'] = quiz_maker(ps, cat, gramm_sorting, prs_conj_maker)
     voc = voc_maker(ps, cat)
+    for el in sess_2:
+        print('\n' + el, end=' ')
+        if type(sess_2[el]) == str or type(sess_2[el]) == dict:
+            for item in sess_2[el]:
+                print(item, end=' ')
+        else:
+            print(sess_2[el])
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
                            profile_refer=profile_refer,# #quizes_refer=quizes_refer,# test_refer=test_refer,
@@ -559,18 +581,35 @@ def vocab_verbs():
 @app.route('/materials/vocab_adverbs')
 @login_required
 def vocab_adverbs():
+    if session['user_id'] == g:
+        session.permanent = True
+    #if '/security.logout':
+    #    session.clear()
     ps = 'adv'
     cat = ['adv']
     session['mark'] = 0
-    session['quiz_adv'] = quiz_maker(ps, cat, sorting)
-    session['questions_adv'] = quiz_maker(ps, cat, sorting)
-    session['quizb_adv'] = quiz_maker(ps, cat, sorting_back)
-    session['quest_b_adv'] = quiz_maker(ps, cat, sorting_back)
+    sess_2['quiz_adv'] = quiz_maker(ps, cat, sorting)
+    sess_2['questions_adv'] = quiz_maker(ps, cat, sorting)
+    sess_2['quizb_adv'] = quiz_maker(ps, cat, sorting_back)
+    sess_2['quest_b_adv'] = quiz_maker(ps, cat, sorting_back)
     voc = voc_maker(ps, cat)
+    for el in sess_2:
+        print('\n' + el, end=' ')
+        if type(sess_2[el]) == str or type(sess_2[el]) == dict:
+            for item in sess_2[el]:
+                print(item, end=' ')
+        else:
+            print(sess_2[el])
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
                            profile_refer=profile_refer,
                            mama=cat, voc=voc, vocab_category="L'Adverbe")
+
+
+@app.route('/keyboard', methods=['GET'])
+@login_required
+def keyboard():
+    return render_template('reqvkb.html')
 
 
 if __name__ == '__main__':
