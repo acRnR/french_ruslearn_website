@@ -130,6 +130,11 @@ def sorting_back(data, ps, categories, f=None):
 
 
 def gramm_sorting(data, ps, categories, f):
+    #hints = {
+     #   '1d': 'l’apparition de la voyelle mobile pour tous les mots présentant une accumulation de consonnes avec la désinence Ø\nles mots à accent non final, tels que гóстья «l’invitée», ont une forme de Génitif pl. en -ий\nles mots à accent final, tels que судья́ «le juge», ont une forme de Génitif pl. en -eй\ndans une séquence «voyelle + й + consonne + a», le mécanisme de la voyelle mobile fait que le -й- est remplacé par un -e-\n!Exceptions! Il y a trois mots en -ня où le /n\'/ reste mou au Gen. pl., si l’accent est final, -ня́, on a une désinence -éй',
+      #  'm': 'Le Génitif pluriel, outre les désinences de base dans les Types I et II, peut avoir une désinence Ø. La désinence Ø apparaît dans les mots dont le thème change au pluriel (mots en -анин / -янин, en -ёнок / -онок et en -ин)\nUn certain nombre de mots ont une désinence Ø au Génitif pl. Le Génitif pl. sera donc semblable au Nominatif sg., mis à part les quelques cas où l’accent différencie les deux formes',
+       # 'n': 'Une série de neutre en -o avec élargissement du thème par /j/, comme les substantifs masculins du type брат, le Génitif pl. de ces mots est -ьев\nLe Génitif pl. a une désinence en -ев / -ов (outre les mots de cette série) dans deux mots en -ко mentionnés ci-dessus et dans quelques mots en -ье\nLa désinence type pour cette déclinaison, la désinence Ø, peut entraîner l’apparition d’une voyelle mobile\nIl faut prêter attention aux mots en -ье, ceux-ci ont une forme de Génitif pl. en -ий'
+    #}
     forms = f()
     d = {}
     for row in data:
@@ -140,6 +145,8 @@ def gramm_sorting(data, ps, categories, f):
                         d[category] = []
                     if row['Rus'] in forms:
                         d[category].append([forms[row['Rus']][0], forms[row['Rus']][1]])
+                        #if category in hints:
+                         #   d[category].append(hints[category])
     return d
 
 
@@ -448,27 +455,37 @@ def testb(categ):
     except NameError:
         redirect(url_for('vocab_verbs'))
 
+sess_2['i'] = 0
+
 # todo: добавить подсказки правил
 @app.route('/materials/genpl_<categ>', methods=['GET', 'POST'])
 @login_required
 def test_gen(categ):
-    # questions_adv = session['quest_b_adv']
+    hints = {
+        '1d': 'l’apparition de la voyelle mobile pour tous les mots présentant une accumulation de consonnes avec la désinence Ø\nles mots à accent non final, tels que гóстья «l’invitée», ont une forme de Génitif pl. en -ий\nles mots à accent final, tels que судья́ «le juge», ont une forme de Génitif pl. en -eй\ndans une séquence «voyelle + й + consonne + a», le mécanisme de la voyelle mobile fait que le -й- est remplacé par un -e-\n!Exceptions! Il y a trois mots en -ня où le /n\'/ reste mou au Gen. pl., si l’accent est final, -ня́, on a une désinence -éй',
+        'm': 'Le Génitif pluriel, outre les désinences de base dans les Types I et II, peut avoir une désinence Ø. La désinence Ø apparaît dans les mots dont le thème change au pluriel (mots en -анин / -янин, en -ёнок / -онок et en -ин)\nUn certain nombre de mots ont une désinence Ø au Génitif pl. Le Génitif pl. sera donc semblable au Nominatif sg., mis à part les quelques cas où l’accent différencie les deux formes',
+        'n': 'Une série de neutre en -o avec élargissement du thème par /j/, comme les substantifs masculins du type брат, le Génitif pl. de ces mots est -ьев\nLe Génitif pl. a une désinence en -ев / -ов (outre les mots de cette série) dans deux mots en -ко mentionnés ci-dessus et dans quelques mots en -ье\nLa désinence type pour cette déclinaison, la désinence Ø, peut entraîner l’apparition d’une voyelle mobile\nIl faut prêter attention aux mots en -ье, ceux-ci ont une forme de Génitif pl. en -ий'
+    }
     questions = sess_2['ex_genpl']
     try:
         profile_refer = url_for('profile_page')
-        #quizes_refer = url_for('quizes_page')
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
             elif entered_answer != questions[categ][session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions[categ][session["current_question"]]["answer"],
-                      "error")
+                if categ in hints and sess_2['i'] == 0:
+                    flash(hints[categ], 'error')
+                    sess_2['i'] += 1
+                else:
+                    flash("La bonne réponse:\n" + questions[categ][session["current_question"]]["answer"],
+                          "error")
             else:
                 session["current_question"] = str(int(session["current_question"]) + 1)
                 if session["current_question"] in questions:
                     redirect(url_for('genpl_', categ=categ))
                 else:
+                    sess_2['i'] = 0
                     return render_template("success.html", profile_refer=profile_refer, a=0)#quizes_refer=quizes_refer, a=0)
         if "current_question" not in session:
             session["current_question"] = "1"
