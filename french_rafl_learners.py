@@ -87,7 +87,7 @@ def distance(a, b):
 def call_db(tbl):
     class Words(object):
         pass
-    db_path = 'vocabulary.db'
+    db_path = 'voc.db'
     engine = create_engine('sqlite:///%s' % db_path, echo=False)
     metadata = MetaData(engine)
     need = Table(tbl, metadata, autoload=True)
@@ -428,7 +428,7 @@ def testb(categ):
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer.replace('́', '&#769;') != questions[categ][session["current_question"]]["answer"]:
+            elif entered_answer != questions[categ][session["current_question"]]["answer"]:
                 flash("La bonne réponse:\n" + questions[categ][session["current_question"]]["answer"], "error")
             else:
                 session["current_question"] = str(int(session["current_question"]) + 1)
@@ -461,7 +461,7 @@ def test_gen(categ):
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer.replace('́', '&#769;') != questions[categ][session["current_question"]]["answer"]:
+            elif entered_answer != questions[categ][session["current_question"]]["answer"]:
                 flash("La bonne réponse:\n" + questions[categ][session["current_question"]]["answer"],
                       "error")
             else:
@@ -495,7 +495,7 @@ def test_conj(categ):
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer.replace('́', '&#769;') != questions[categ][session["current_question"]]["answer"]:
+            elif entered_answer != questions[categ][session["current_question"]]["answer"]:
                 flash("La bonne réponse:\n" + questions[categ][session["current_question"]]["answer"],
                       "error")
             else:

@@ -12,12 +12,12 @@
       <hr/>
       {% for category, message in get_flashed_messages(with_categories=true) %}
       <div class="alert alert-danger">
-        {{ message|safe }}
+        {{ message }}
       </div>
       {% endfor %}
       <form class="form" action="/materials/conj_{{ cat }}" method="post">
         <div class="form-group">
-          <span class="col-lg-2">{{ question_number }}. {{ question|safe }}</span>
+          <span class="col-lg-2">{{ question_number }}. {{ question }}</span>
           <div class="col-lg-2">
             <input type="text" name="answer" placeholder="Answer"
                    class="form-control">

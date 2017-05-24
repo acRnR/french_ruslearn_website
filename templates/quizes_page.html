@@ -18,7 +18,7 @@
     {% endfor %}
     <form class="form" action="/materials/quiz_{{ cat }}" method="post">
     <div class="form-group">
-        <span class="col-lg-2">{{ question_number }}. {{ question|safe }}</span>
+        <span class="col-lg-2">{{ question_number }}. {{ question }}</span>
         <div class="col-lg-2">
             <input type="text" name="answer" placeholder="Answer" class="form-control">
         </div>
