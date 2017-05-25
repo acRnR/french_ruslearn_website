@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Виртуальная клавиатура</title>
+<title>Le clavier virtuel</title>
 <style>
 body, table, input, select { font-family: arial; font-size: 8pt; }
 body { background-color: #ffffff; }
@@ -10,20 +10,7 @@ h3 { font-family: arial; font-size: 12pt; }
 td.title    { background-color: white; }
 </style>
 <script language=JavaScript>
-function collect(mode) {
-    var s = document.lex.text.value;
 
-    sourceName = window.name;
-    if (sourceName != 'req')
-    {
-      if (window.opener && !window.opener.closed)
-        window.opener.document.reqForm.elements[sourceName].value = s;
-    }
-    else
-      if (window.opener && !window.opener.closed)
-        window.opener.document.exactForm.elements[sourceName].value = s;
-    window.close();
-}
 form_name="document.lex.text";
 lang = 'russian';
 </script>
@@ -42,9 +29,11 @@ try { var yaCounter677861 = new Ya.Metrika(677861); } catch(e){}
 <!-- /Yandex.Metrika -->
 
 <center>
-<h3>Виртуальная клавиатура</h3>
+<h3>Le clavier virtuel</h3>
 
-
+    <p>Tapez votre réponse</p>
+    <p>(le signe de stress se trouve en haut à gauche)</p>
+    <p>Copiez votre réponse et collez-le dans le formulaire dans l'onglet avec la question</p>
 
 <form name=lex method="get" action="{{ kekurl }}">
 
