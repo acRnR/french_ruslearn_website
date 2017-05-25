@@ -23,7 +23,8 @@
             <td><a href="{{ 'biggenpl'}}">Génitif pluriel</a> </td>
             {% elif vocab_category == 'Le Verbe' %}
             <td><a href="{{ 'bigconj_v'}}">Conjugation présent</a> </td>
-            <td><a href="{{ 'bigconj_v1'}}">Conjugation présent</a> </td>
+            <td><a href="{{ 'bigconj_v1'}}">Conjugation présent type I</a> </td>
+            <td><a href="{{ 'bigconj_v2'}}">Conjugation présent type II</a> </td>
             {% endif %}
 
         </tr>
@@ -63,7 +64,7 @@
         <tbody>
             {% for el in voc[cat] %}
         <tr>
-            <td>{{ el[0]|safe }}</td>
+            <td>{{ el[0] }}</td>
             <td>{{ el[1] }}</td>
         </tr>
              {% endfor %}
