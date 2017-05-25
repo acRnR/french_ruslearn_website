@@ -98,6 +98,25 @@ def call_db(tbl):
     return result
 
 
+def useremailget():
+    db_path = 'userinfo.db'
+    engine = create_engine('sqlite:///%s' % db_path, echo=False)
+    metadata = MetaData(engine)
+    need = Table('User', metadata, autoload=True)
+    #mapper(Words, need)
+    sessionmaker(bind=engine)
+    conn = engine.connect()
+    s = select([need])
+    result = conn.execute(s)
+    for row in result:
+        if str(row['id']) == str(session['user_id']):
+            print('eeeeeee')
+            return row['email']
+        else:
+            print(session['user_id'])
+            print('sdfcserf', row['id'])
+
+
 def voc_maker(ps, categories):
     result = call_db('rus_words')
     d = sorting(result, ps, categories)
@@ -222,7 +241,8 @@ def quiz_maker(ps, cat, sorter, func=None):
 @app.route('/')
 @login_required
 def profile_page():
-    g = session['user_id']
+    #g = session['user_id']
+    uemail = useremailget()
     profile_refer = url_for('profile_page')
     #quizes_refer = url_for('quizes_page')
     #test_refer = url_for('test_1d')
@@ -233,7 +253,7 @@ def profile_page():
     # todo: добавить ссылки на тесты
     return render_template('profile_page.html',
                            profile_refer=profile_refer,# quizes_refer=quizes_refer,#test_refer=test_refer,
-                           noun_voc=n_v, verb_voc=v_v, adv_voc=a_v)
+                           noun_voc=n_v, verb_voc=v_v, adv_voc=a_v, uemail=uemail)
 """---------------------------------КВИЗЫ----------------------------------------"""
 
 # todo: выводить в конце квиза ошибки
@@ -721,13 +741,13 @@ def vocab_nouns():
     sess_2['ex_genpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     sess_2['biggenpl'] = big_q_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     sess_2['mistake_q_n'] = []
-    sess_2['mistake_bq_n']
+    sess_2['mistake_bq_n'] = []
     sess_2['mistake_gq_n'] = []
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
                            profile_refer=profile_refer,
-                           mama=cat, voc=voc, vocab_category='Le Substantif', ps='n')
+                           mama=cat, voc=voc, vocab_category='Le Substantif', ps='n', uemail=useremailget())
 
 
 @app.route('/materials/vocab_verbs')
@@ -758,7 +778,7 @@ def vocab_verbs():
     sess_2['mistake_cq_v'] = []
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
-    return render_template('vocab.html',
+    return render_template('vocab.html', uemail=useremailget(),
                            profile_refer=profile_refer, mama=cat, voc=voc, vocab_category='Le Verbe', ps='v')
 
 
@@ -779,7 +799,7 @@ def vocab_adverbs():
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
-                           profile_refer=profile_refer,
+                           profile_refer=profile_refer, uemail=useremailget(),
                            mama=cat, voc=voc, vocab_category="L'Adverbe", ps='adv')
 
 
