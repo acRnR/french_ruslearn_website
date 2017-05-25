@@ -215,10 +215,7 @@ def quiz_maker(ps, cat, sorter, func=None):
     #{ cat : [ 1 : {"question": row[0], "answer": row[1]}, 2 : {"question": row[0], "answer": row[1]} }]
     return newd
 """-------------------------------------------------------------------------"""
-#if 'logout':
- #   print(session)
-  #  session.clear()
-   # print('aaa', session)
+
 """-------------------------------------------------------------------"""
 
 
@@ -250,6 +247,7 @@ def quizes_page(categ):
         'adv': 'adv'
     }
     questions = sess_2['quiz_' + cs[categ]]
+
     try:
         profile_refer = url_for('profile_page')
         if request.method == "POST":
@@ -263,7 +261,7 @@ def quizes_page(categ):
                 elif dist == 1:
                     session['mark'] += (1/2)
                 else:
-                    print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
+                    sess_2['mistake_q_'+cs[categ]].append(questions[categ][session["current_question"]]["question"]+' - '+questions[categ][session["current_question"]]["answer"])#print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
                 session["current_question"] = str(int(session["current_question"]) + 1)
                 if session["current_question"] in questions:
                     redirect(url_for('quizes_page', categ=categ))
@@ -275,7 +273,7 @@ def quizes_page(categ):
             mark = session['mark']
             session['mark'] = 0
             session.pop("current_question")
-            return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark)
+            return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark, mistakes=sess_2['mistake_q_'+cs[categ]])
         return render_template("quizes_page.html",
                                question=questions[categ][session["current_question"]]["question"],
                                question_number=session["current_question"],
@@ -307,19 +305,19 @@ def quizb_page(categ):
                 elif dist == 1:
                     session['mark'] += (1/2)
                 else:
-                    print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
+                    sess_2['mistake_bq_'+cs[categ]].append(questions[categ][session["current_question"]]["question"]+' - '+questions[categ][session["current_question"]]["answer"])
                 session["current_question"] = str(int(session["current_question"]) + 1)
                 if session["current_question"] in questions:
                     redirect(url_for('quizb_page', categ=categ))
                 else:
-                    return render_template("q_success.html", profile_refer=profile_refer, a=0)
+                    return render_template("q_success.html", profile_refer=profile_refer, a=0)#, markk=mark, mistakes=)
         if "current_question" not in session:
             session["current_question"] = "1"
         elif session["current_question"] not in questions[categ]:
             mark = session['mark']
             session['mark'] = 0
             session.pop("current_question")
-            return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark)
+            return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark, mistakes=sess_2['mistake_bq_'+cs[categ]])
         return render_template("quizes_backw.html",
                                question=questions[categ][session["current_question"]]["question"],
                                question_number=session["current_question"],
@@ -345,7 +343,7 @@ def qgenpl(categ):
                 elif dist == 1:
                     session['mark'] += (1/2)
                 else:
-                    print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
+                    sess_2['mistake_gq_n'].append(questions[categ][session["current_question"]]["question"].replace('...', questions[categ][session["current_question"]]["answer"]))
                 session["current_question"] = str(int(session["current_question"]) + 1)
                 if session["current_question"] in questions:
                     redirect(url_for('qgenpl', categ=categ))
@@ -357,7 +355,7 @@ def qgenpl(categ):
             mark = session['mark']
             session['mark'] = 0
             session.pop("current_question")
-            return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark)
+            return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark, mistakes=sess_2['mistake_gq_n'])
         return render_template("quiz_genpl.html",
                                question=questions[categ][session["current_question"]]["question"],
                                question_number=session["current_question"],
@@ -383,7 +381,7 @@ def qconj(categ):
                 elif dist == 1:
                     session['mark'] += (1/2)
                 else:
-                    print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
+                    sess_2['mistake_cq_v'].append(questions[categ][session["current_question"]]["question"].replace('...', questions[categ][session["current_question"]]["answer"]))
                 session["current_question"] = str(int(session["current_question"]) + 1)
                 if session["current_question"] in questions:
                     redirect(url_for('qconj', categ=categ))
@@ -395,7 +393,8 @@ def qconj(categ):
             mark = session['mark']
             session['mark'] = 0
             session.pop("current_question")
-            return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark)
+            return render_template("q_success.html", profile_refer=profile_refer, a=1,
+                                   markk=mark, mistakes=sess_2['mistake_cq_v'])
         return render_template("quiz_conj.html",
                                question=questions[categ][session["current_question"]]["question"],
                                question_number=session["current_question"],
@@ -666,7 +665,7 @@ def biggenpl():
     except NameError:
         redirect(url_for('vocab_nouns'))
 
-# todo: bigcoj
+
 @app.route('/materials/bigconj_<categ>', methods=['GET', 'POST'])
 @login_required
 def bigconj(categ):
@@ -717,6 +716,8 @@ def vocab_nouns():
     sess_2['qgenpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     sess_2['ex_genpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     sess_2['biggenpl'] = big_q_maker(ps, cat, gramm_sorting, ex_genpl_maker)
+    sess_2['mistake_q_n'] = []
+    sess_2['mistake_gq_n'] = []
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
@@ -747,6 +748,9 @@ def vocab_verbs():
     sess_2['bigconjv'] = big_q_maker(ps, cat, gramm_sorting, prs_conj_maker)
     sess_2['bigconjv1'] = big_q_maker(ps, bigcat1, gramm_sorting, prs_conj_maker)
     sess_2['bigconjv2'] = big_q_maker(ps, bigcat2, gramm_sorting, prs_conj_maker)
+    sess_2['mistake_q_v'] = []
+    sess_2['mistake_bq_v'] = []
+    sess_2['mistake_cq_v'] = []
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
@@ -765,6 +769,8 @@ def vocab_adverbs():
     sess_2['quizb_adv'] = quiz_maker(ps, cat, sorting_back)
     sess_2['quest_b_adv'] = quiz_maker(ps, cat, sorting_back)
     sess_2['big_tb_adv'] = big_q_maker(ps, cat, sorting_back)
+    sess_2['mistake_q_adv'] = []
+    sess_2['mistake_bq_adv'] = []
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
