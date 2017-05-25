@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <!--script type="text/javascript" src="/keyboard.js" charset="UTF-8"></script>
+    <link rel="stylesheet" type="text/css" href="/keyboard.css"-->
+    <script language="JavaScript" src="common.js"> </script>
+    <script language="JavaScript" src="main.js"></script>
+    <link href="style.css" type="text/css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+<body>
+ <div class="container">
+      <div class="header">
+        <h3 class="text-muted">Traduisez-le en russe</h3>
+      </div>
+      <p>question {{ question_number }} de {{ sumup }}</p>
+      <hr/>
+      {% for category, message in get_flashed_messages(with_categories=true) %}
+      <div class="alert alert-danger">
+        {{ message }}
+      </div>
+      {% endfor %}
+      <form class="form" action="/materials/bigtestb_{{ cat }}" method="post">
+        <div class="form-group">
+          <span class="col-lg-2">{{ question }}</span>
+          <div class="col-lg-2">
+            <input type="text" name="answer" placeholder="Answer" class="form-control"><!-- keyboardInput"-->
+            <a href="#" onClick="return getVkb('req')"><img style="vertical-align:bottom;" src="keyboard.gif" alt="Виртуальная клавиатура" title="Виртуальная клавиатура" width="42" height="21" border="0"></a>
+          </div>
+        <input type="submit" class="btn btn-primary" value="Submit">
+        </div>
+      </form>
+ </div>
+
+<div class="test-question">
+
+</div>
+</body>
+</html>

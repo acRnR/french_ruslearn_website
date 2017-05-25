@@ -60,7 +60,6 @@ security = Security(app, user_datastore)
    # db.session.commit()
 
 
-
 """------------------------------------------------------------------------------"""
 
 
@@ -105,38 +104,50 @@ def voc_maker(ps, categories):
     return d
 
 
-def sorting(data, ps, categories, f=None):
+def sorting(data, ps, categories, f=None, n=None):
     d = {}
-    for row in data:
-        if row['part_of_speech'] == ps:
-            for category in categories:
-                if row['category'] == category or row['extra_info'] == category:
-                    if category not in d:
-                        d[category] = []
-                    d[category].append([row['Rus'], row['Fran']])
+    if n == 1:
+        for row in data:
+            if row['category'] in categories:
+                d[row['Rus']] = row['Fran']
+    else:
+        for row in data:
+            if row['part_of_speech'] == ps:
+                for category in categories:
+                    if row['category'] == category or row['extra_info'] == category:
+                        if category not in d:
+                            d[category] = []
+                        d[category].append([row['Rus'], row['Fran']])
     return d
 
 
-def sorting_back(data, ps, categories, f=None):
+
+def sorting_back(data, ps, categories, f=None, n=None):
     d = {}
-    for row in data:
-        if row['part_of_speech'] == ps:
-            for category in categories:
-                if row['category'] == category or row['extra_info'] == category:
-                    if category not in d:
-                        d[category] = []
-                    d[category].append([row['Fran'], row['Rus']])
+    if n == 1:
+        for row in data:
+            if row['category'] in categories:
+                d[row['Fran']] = row['Rus']
+    else:
+        for row in data:
+            if row['part_of_speech'] == ps:
+                for category in categories:
+                    if row['category'] == category or row['extra_info'] == category:
+                        if category not in d:
+                            d[category] = []
+                        d[category].append([row['Fran'], row['Rus']])
     return d
 
 
-def gramm_sorting(data, ps, categories, f):
-    #hints = {
-     #   '1d': 'l’apparition de la voyelle mobile pour tous les mots présentant une accumulation de consonnes avec la désinence Ø\nles mots à accent non final, tels que гóстья «l’invitée», ont une forme de Génitif pl. en -ий\nles mots à accent final, tels que судья́ «le juge», ont une forme de Génitif pl. en -eй\ndans une séquence «voyelle + й + consonne + a», le mécanisme de la voyelle mobile fait que le -й- est remplacé par un -e-\n!Exceptions! Il y a trois mots en -ня où le /n\'/ reste mou au Gen. pl., si l’accent est final, -ня́, on a une désinence -éй',
-      #  'm': 'Le Génitif pluriel, outre les désinences de base dans les Types I et II, peut avoir une désinence Ø. La désinence Ø apparaît dans les mots dont le thème change au pluriel (mots en -анин / -янин, en -ёнок / -онок et en -ин)\nUn certain nombre de mots ont une désinence Ø au Génitif pl. Le Génitif pl. sera donc semblable au Nominatif sg., mis à part les quelques cas où l’accent différencie les deux formes',
-       # 'n': 'Une série de neutre en -o avec élargissement du thème par /j/, comme les substantifs masculins du type брат, le Génitif pl. de ces mots est -ьев\nLe Génitif pl. a une désinence en -ев / -ов (outre les mots de cette série) dans deux mots en -ко mentionnés ci-dessus et dans quelques mots en -ье\nLa désinence type pour cette déclinaison, la désinence Ø, peut entraîner l’apparition d’une voyelle mobile\nIl faut prêter attention aux mots en -ье, ceux-ci ont une forme de Génitif pl. en -ий'
-    #}
+def gramm_sorting(data, ps, categories, f, n=None):
     forms = f()
     d = {}
+    if n == 1:
+        for row in data:
+            if row['category'] in categories:
+                #d[row['Fran']] = row['Rus']
+                if row['Rus'] in forms:
+                    d[forms[row['Rus']][0]] = forms[row['Rus']][1]
     for row in data:
         if row['part_of_speech'] == ps:
             for category in categories:
@@ -172,6 +183,20 @@ def prs_conj_maker():
     return d
 
 
+def big_q_maker(ps, cat, sorter, func=None):
+    result = call_db('rus_words')
+    d = sorter(result, ps, cat, func, 1)
+    quests = {}
+    num = 1
+    for key in d:  # {'1d':[['лол', 'lol'], ['шта', 'wut']]}
+        try:
+            quests[str(num)] = {"question": key, "answer": d[key]}
+            num += 1
+        except ValueError:
+            continue
+    return quests
+
+
 def quiz_maker(ps, cat, sorter, func=None):
     result = call_db('rus_words')
     d = sorter(result, ps, cat, func)
@@ -180,10 +205,10 @@ def quiz_maker(ps, cat, sorter, func=None):
         try:
             quiz_mater = random.sample(d[key], 5)
             quests = {}
-            i = 1
+            num = 1
             for row in quiz_mater:
-                quests[str(i)] = {"question": row[0], "answer": row[1]}
-                i += 1
+                quests[str(num)] = {"question": row[0], "answer": row[1]}
+                num += 1
                 newd[key] = quests
         except ValueError:
             continue
@@ -212,7 +237,7 @@ def profile_page():
     return render_template('profile_page.html',
                            profile_refer=profile_refer,# quizes_refer=quizes_refer,#test_refer=test_refer,
                            noun_voc=n_v, verb_voc=v_v, adv_voc=a_v)
-"""-------------------------------------------------------------------------"""
+"""---------------------------------КВИЗЫ----------------------------------------"""
 
 # todo: выводить в конце квиза ошибки
 @app.route('/materials/quiz_<categ>', methods=['GET', 'POST'])
@@ -377,7 +402,7 @@ def qconj(categ):
                                profile_refer=profile_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_verbs'))
-"""-------------------------------------------------------------------------"""
+"""-----------------------------МАЛЕНЬКИЕ-----ТЕСТЫ---------------------------------------"""
 
 
 @app.route('/materials/test_<categ>', methods=['GET', 'POST'])
@@ -462,9 +487,9 @@ sess_2['i'] = 0
 @login_required
 def test_gen(categ):
     hints = {
-        '1d': 'l’apparition de la voyelle mobile pour tous les mots présentant une accumulation de consonnes avec la désinence Ø\nles mots à accent non final, tels que гóстья «l’invitée», ont une forme de Génitif pl. en -ий\nles mots à accent final, tels que судья́ «le juge», ont une forme de Génitif pl. en -eй\ndans une séquence «voyelle + й + consonne + a», le mécanisme de la voyelle mobile fait que le -й- est remplacé par un -e-\n!Exceptions! Il y a trois mots en -ня où le /n\'/ reste mou au Gen. pl., si l’accent est final, -ня́, on a une désinence -éй',
-        'm': 'Le Génitif pluriel, outre les désinences de base dans les Types I et II, peut avoir une désinence Ø. La désinence Ø apparaît dans les mots dont le thème change au pluriel (mots en -анин / -янин, en -ёнок / -онок et en -ин)\nUn certain nombre de mots ont une désinence Ø au Génitif pl. Le Génitif pl. sera donc semblable au Nominatif sg., mis à part les quelques cas où l’accent différencie les deux formes',
-        'n': 'Une série de neutre en -o avec élargissement du thème par /j/, comme les substantifs masculins du type брат, le Génitif pl. de ces mots est -ьев\nLe Génitif pl. a une désinence en -ев / -ов (outre les mots de cette série) dans deux mots en -ко mentionnés ci-dessus et dans quelques mots en -ье\nLa désinence type pour cette déclinaison, la désinence Ø, peut entraîner l’apparition d’une voyelle mobile\nIl faut prêter attention aux mots en -ье, ceux-ci ont une forme de Génitif pl. en -ий'
+        '1d': u'l’apparition de la voyelle mobile pour tous les mots présentant une accumulation de consonnes avec la désinence Ø\nles mots à accent non final, tels que гóстья «l’invitée», ont une forme de Génitif pl. en -ий\nles mots à accent final, tels que судья́ «le juge», ont une forme de Génitif pl. en -eй\ndans une séquence «voyelle + й + consonne + a», le mécanisme de la voyelle mobile fait que le -й- est remplacé par un -e-\n!Exceptions! Il y a trois mots en -ня où le /n\'/ reste mou au Gen. pl., si l’accent est final, -ня́, on a une désinence -éй',
+        'm': u'Le Génitif pluriel, outre les désinences de base dans les Types I et II, peut avoir une désinence Ø. La désinence Ø apparaît dans les mots dont le thème change au pluriel (mots en -анин / -янин, en -ёнок / -онок et en -ин)\nUn certain nombre de mots ont une désinence Ø au Génitif pl. Le Génitif pl. sera donc semblable au Nominatif sg., mis à part les quelques cas où l’accent différencie les deux formes',
+        'n': u'Une série de neutre en -o avec élargissement du thème par /j/, comme les substantifs masculins du type брат, le Génitif pl. de ces mots est -ьев\nLe Génitif pl. a une désinence en -ев / -ов (outre les mots de cette série) dans deux mots en -ко mentionnés ci-dessus et dans quelques mots en -ье\nLa désinence type pour cette déclinaison, la désinence Ø, peut entraîner l’apparition d’une voyelle mobile\nIl faut prêter attention aux mots en -ье, ceux-ci ont une forme de Génitif pl. en -ий'
     }
     questions = sess_2['ex_genpl']
     try:
@@ -499,7 +524,7 @@ def test_gen(categ):
     except NameError:
         redirect(url_for('vocab_nouns'))
 
-# todo: добавить подсказки правил
+
 @app.route('/materials/conj_<categ>', methods=['GET', 'POST'])
 @login_required
 def test_conj(categ):
@@ -532,95 +557,216 @@ def test_conj(categ):
                                profile_refer=profile_refer, cat=categ)#quizes_refer=quizes_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_adverbs'))
-"""------------------------------------------------------------------------"""
+"""------------------------------БОЛЬШИЕ-------------ТЕСТЫ----------------------------------------------"""
+
+
+@app.route('/materials/bigtest_<categ>', methods=['GET', 'POST'])
+@login_required
+def bigtest(categ):
+    questions = sess_2['big_t_' + categ]
+    #print(questions[len(questions)])
+    #print(sorted(list(questions)))
+    try:
+        profile_refer = url_for('profile_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer != questions[session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions[session["current_question"]]["answer"],
+                      "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions:
+                    redirect(url_for('bigtest', categ=categ))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions:
+            session.pop('current_question')
+            return render_template("success.html", profile_refer=profile_refer, a=1)  # quizes_refer=quizes_refer, a=1)
+        return render_template("bigtest.html",
+                               question=questions[session["current_question"]]["question"],
+                               question_number=session["current_question"], sumup=len(questions), # pg=url_for('test', categ=categ),
+                               profile_refer=profile_refer, cat=categ)
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+
+@app.route('/materials/bigtestb_<categ>', methods=['GET', 'POST'])
+@login_required
+def bigtestb(categ):
+    questions = sess_2['big_tb_' + categ]
+    try:
+        profile_refer = url_for('profile_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer != questions[session["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions[session["current_question"]]["answer"], "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions:
+                    redirect(url_for('bigtestb', categ=categ))
+                else:
+                    return render_template("success.html", profile_refer=profile_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions:
+            session.pop('current_question')
+            return render_template("success.html", profile_refer=profile_refer, a=1)
+        return render_template("bigtestb.html",
+                               question=questions[session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, cat=categ, sumup = len(questions))
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+#todo: Подсказки
+@app.route('/materials/biggenpl', methods=['GET', 'POST'])
+@login_required
+def biggenpl():
+    hints = {
+        '1d': u'l’apparition de la voyelle mobile pour tous les mots présentant une accumulation de consonnes avec la désinence Ø\nles mots à accent non final, tels que гóстья «l’invitée», ont une forme de Génitif pl. en -ий\nles mots à accent final, tels que судья́ «le juge», ont une forme de Génitif pl. en -eй\ndans une séquence «voyelle + й + consonne + a», le mécanisme de la voyelle mobile fait que le -й- est remplacé par un -e-\n!Exceptions! Il y a trois mots en -ня où le /n\'/ reste mou au Gen. pl., si l’accent est final, -ня́, on a une désinence -éй',
+        'm': u'Le Génitif pluriel, outre les désinences de base dans les Types I et II, peut avoir une désinence Ø. La désinence Ø apparaît dans les mots dont le thème change au pluriel (mots en -анин / -янин, en -ёнок / -онок et en -ин)\nUn certain nombre de mots ont une désinence Ø au Génitif pl. Le Génitif pl. sera donc semblable au Nominatif sg., mis à part les quelques cas où l’accent différencie les deux formes',
+        'n': u'Une série de neutre en -o avec élargissement du thème par /j/, comme les substantifs masculins du type брат, le Génitif pl. de ces mots est -ьев\nLe Génitif pl. a une désinence en -ев / -ов (outre les mots de cette série) dans deux mots en -ко mentionnés ci-dessus et dans quelques mots en -ье\nLa désinence type pour cette déclinaison, la désinence Ø, peut entraîner l’apparition d’une voyelle mobile\nIl faut prêter attention aux mots en -ье, ceux-ci ont une forme de Génitif pl. en -ий'
+    }
+    questions = sess_2['biggenpl']
+    try:
+        profile_refer = url_for('profile_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")  # Show error if no answer entered
+            elif entered_answer != questions[session["current_question"]]["answer"]:
+                #if categ in hints and sess_2['i'] == 0:
+                 #   flash(hints[categ], 'error')
+                  #  sess_2['i'] += 1
+                #else:
+                flash("La bonne réponse:\n" + questions[session["current_question"]]["answer"],
+                      "error")
+            else:
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions:
+                    redirect(url_for('biggenpl'))
+                else:
+                    sess_2['i'] = 0
+                    return render_template("success.html", profile_refer=profile_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        if session["current_question"] not in questions:
+            session.pop('current_question')
+            return render_template("success.html", profile_refer=profile_refer, a=1)  # quizes_refer=quizes_refer, a=1)
+        return render_template("bigt_gen.html",
+                               question=questions[session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, sumup=len(questions))  # quizes_refer=quizes_refer, cat=categ)
+    except NameError:
+        redirect(url_for('vocab_nouns'))
+
+# todo: bigcoj
+@app.route('/materials/bigconj_<cat>', methods=['GET', 'POST'])
+@login_required
+def bigconj(cat):
+    pass
+"""-----------------------------------МАТЕРИАЛЫ-----------------------------------------------------"""
 
 
 @app.route('/materials/vocab_nouns')
 @login_required
 def vocab_nouns():
-    if session['user_id'] == g:
-        session.permanent = True
-    #if '/security.logout':
-     #   session.clear()
+    #if session['user_id'] == g:
+     #   session.permanent = True
     ps = 's'
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
     session['mark'] = 0
-    sess_2['quiz_n'] = quiz_maker(ps, cat, sorting)
+    sess_2['quiz_n'] = big_q_maker(ps, cat, sorting)
     sess_2['questions_n'] = quiz_maker(ps, cat, sorting)
-    sess_2['quizb_n'] = quiz_maker(ps, cat, sorting_back)
+    sess_2['big_t_n'] = big_q_maker(ps, cat, sorting)
+    sess_2['quizb_n'] = big_q_maker(ps, cat, sorting_back)
     sess_2['quest_b_n'] = quiz_maker(ps, cat, sorting_back)
-    sess_2['qgenpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
+    sess_2['big_tb_n'] = big_q_maker(ps, cat, sorting_back)
+    sess_2['qgenpl'] = big_q_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     sess_2['ex_genpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
+    sess_2['biggenpl'] = big_q_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     voc = voc_maker(ps, cat)
-    for el in sess_2:
-        print('\n'+el, end=' ')
-        if type(sess_2[el]) == str or type(sess_2[el]) == dict:
-            for item in sess_2[el]:
-                print(item, end=' ')
-        else:
-            print(sess_2[el], end=' ')
+    #for el in sess_2:
+        #print('\n'+el, end=' ')
+     #   if type(sess_2[el]) == str or type(sess_2[el]) == dict:
+      #      for item in sess_2[el]:
+                #print(item, end=' ')
+       # else:
+        #    print(sess_2[el], end=' ')
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
                            profile_refer=profile_refer,
-                           mama=cat, voc=voc, vocab_category='Le Substantif')
+                           mama=cat, voc=voc, vocab_category='Le Substantif', ps='n')
 
 
 @app.route('/materials/vocab_verbs')
 @login_required
 def vocab_verbs():
-    if session['user_id'] == g:
-        session.permanent = True
-    #if '/security.logout':
-     #   session.clear()
     ps = 'v'
     cat = ['1_productif', '1_sans_diff', '1_avec_diff', '1_base_altern', '2_productif', '2_improductif']
+    bigcat1 = ['1_productif', '1_sans_diff', '1_avec_diff', '1_base_altern']
+    bigcat2 = ['2_productif', '2_improductif']
     session['mark'] = 0
-    sess_2['quiz_v'] = quiz_maker(ps, cat, sorting)
+    sess_2['quiz_v'] = big_q_maker(ps, cat, sorting)
     sess_2['questions_v'] = quiz_maker(ps, cat, sorting)
-    sess_2['quizb_v'] = quiz_maker(ps, cat, sorting_back)
+    sess_2['big_t_v1'] = big_q_maker(ps, bigcat1, sorting)
+    sess_2['big_t_v2'] = big_q_maker(ps, bigcat2, sorting)
+    sess_2['big_t_v'] = big_q_maker(ps, cat, sorting)
+    sess_2['quizb_v'] = big_q_maker(ps, cat, sorting_back)
     sess_2['quest_b_v'] = quiz_maker(ps, cat, sorting_back)
-    sess_2['qconj'] = quiz_maker(ps, cat, gramm_sorting, prs_conj_maker)
+    sess_2['big_tb_v1'] = big_q_maker(ps, bigcat1, sorting_back)
+    sess_2['big_tb_v2'] = big_q_maker(ps, bigcat2, sorting_back)
+    sess_2['big_tb_v'] = big_q_maker(ps, cat, sorting_back)
+    sess_2['qconj'] = big_q_maker(ps, cat, gramm_sorting, prs_conj_maker)
     sess_2['ex_conj'] = quiz_maker(ps, cat, gramm_sorting, prs_conj_maker)
+    sess_2['bigconj'] = big_q_maker(ps, cat, gramm_sorting, prs_conj_maker)
+    sess_2['bigconj1'] = big_q_maker(ps, bigcat1, gramm_sorting, prs_conj_maker)
+    sess_2['bigconj2'] = big_q_maker(ps, bigcat2, gramm_sorting, prs_conj_maker)
     voc = voc_maker(ps, cat)
-    for el in sess_2:
-        print('\n' + el, end=' ')
-        if type(sess_2[el]) == str or type(sess_2[el]) == dict:
-            for item in sess_2[el]:
-                print(item, end=' ')
-        else:
-            print(sess_2[el])
+    #for el in sess_2:
+     #   print('\n' + el, end=' ')
+      #  if type(sess_2[el]) == str or type(sess_2[el]) == dict:
+       #     for item in sess_2[el]:
+        #        print(item, end=' ')
+        #else:
+         #   print(sess_2[el])
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
-                           profile_refer=profile_refer,# #quizes_refer=quizes_refer,# test_refer=test_refer,
-                           mama=cat, voc=voc, vocab_category='Le Verbe')
+                           profile_refer=profile_refer, mama=cat, voc=voc, vocab_category='Le Verbe', ps='v')
 
 
 @app.route('/materials/vocab_adverbs')
 @login_required
 def vocab_adverbs():
-    if session['user_id'] == g:
-        session.permanent = True
-    #if '/security.logout':
-    #    session.clear()
+    #if session['user_id'] == g:
+     #   session.permanent = True
     ps = 'adv'
     cat = ['adv']
     session['mark'] = 0
-    sess_2['quiz_adv'] = quiz_maker(ps, cat, sorting)
+    sess_2['quiz_adv'] = big_q_maker(ps, cat, sorting)
     sess_2['questions_adv'] = quiz_maker(ps, cat, sorting)
-    sess_2['quizb_adv'] = quiz_maker(ps, cat, sorting_back)
+    sess_2['big_t_adv'] = big_q_maker(ps, cat, sorting)
+    sess_2['quizb_adv'] = big_q_maker(ps, cat, sorting_back)
     sess_2['quest_b_adv'] = quiz_maker(ps, cat, sorting_back)
+    sess_2['big_tb_adv'] = big_q_maker(ps, cat, sorting_back)
     voc = voc_maker(ps, cat)
-    for el in sess_2:
-        print('\n' + el, end=' ')
-        if type(sess_2[el]) == str or type(sess_2[el]) == dict:
-            for item in sess_2[el]:
-                print(item, end=' ')
-        else:
-            print(sess_2[el])
+    #for el in sess_2:
+       # print('\n' + el, end=' ')
+        #if type(sess_2[el]) == str or type(sess_2[el]) == dict:
+         #   for item in sess_2[el]:
+          #      print(item, end=' ')
+        #else:
+         #   print(sess_2[el])
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
                            profile_refer=profile_refer,
-                           mama=cat, voc=voc, vocab_category="L'Adverbe")
+                           mama=cat, voc=voc, vocab_category="L'Adverbe", ps='adv')
 
 
 @app.route('/keyboard', methods=['GET'])

@@ -15,6 +15,18 @@
 <div class="test-links">
     <table>
         <tbody>
+        <tr>
+            <th>Long tests</th>
+            <td><a href="{{ 'bigtest_'+ ps}}">Traduire en français</a> </td>
+            <td><a href="{{ 'bigtestb_'+ ps }}">Traduire en russe</a> </td>
+            {% if vocab_category == 'Le Substantif' %}
+            <td><a href="{{ 'biggenpl'}}">Génitif pluriel</a> </td>
+            {% elif vocab_category == 'Le Verbe' %}
+            <td><a href="{{ 'bigconj_v'}}">Conjugation présent</a> </td>
+            <td><a href="{{ 'bigconj_v1'}}">Conjugation présent</a> </td>
+            {% endif %}
+
+        </tr>
         {% for cat in mama %}
         <tr>
             <th>Traduire en français</th>
