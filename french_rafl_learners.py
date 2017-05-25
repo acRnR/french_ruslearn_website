@@ -453,6 +453,10 @@ def testb(categ):
     }
     questions = sess_2['quest_b_' + cs[categ]]
     try:
+        if request.args:
+            keyboarded = request.args['text']
+        else:
+            keyboarded = ''
         profile_refer = url_for('profile_page')
         #quizes_refer = url_for('quizes_page')
         if request.method == "POST":
@@ -475,7 +479,7 @@ def testb(categ):
         return render_template("test_backw.html",
                                question=questions[categ][session["current_question"]]["question"],
                                question_number=session["current_question"],
-                               profile_refer=profile_refer, cat=categ)#quizes_refer=quizes_refer, cat=categ)
+                               profile_refer=profile_refer, cat=categ)#, keyboarded=keyboarded)#quizes_refer=quizes_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_verbs'))
 
@@ -717,6 +721,7 @@ def vocab_nouns():
     sess_2['ex_genpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     sess_2['biggenpl'] = big_q_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     sess_2['mistake_q_n'] = []
+    sess_2['mistake_bq_n']
     sess_2['mistake_gq_n'] = []
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
@@ -781,6 +786,7 @@ def vocab_adverbs():
 @app.route('/keyboard', methods=['GET'])
 @login_required
 def keyboard():
+
     return render_template('reqvkb.html')
 
 

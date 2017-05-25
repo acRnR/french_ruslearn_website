@@ -46,7 +46,7 @@ try { var yaCounter677861 = new Ya.Metrika(677861); } catch(e){}
 
 
 
-<form name=lex>
+<form name=lex method="get"><!-- action="{{ kekurl }}"-->
 
 <!--  keyboard-->
 <SCRIPT LANGUAGE=javascript FOR=textEl EVENT=onchange>
@@ -55,7 +55,7 @@ try { var yaCounter677861 = new Ya.Metrika(677861); } catch(e){}
 <SCRIPT LANGUAGE=javascript FOR=textEl EVENT=onfocus>
     click_ie(event);
 </SCRIPT>
-<input type=text name=text size=70>&nbsp;&nbsp;<input type=button class=button value="OK" onclick="collect()">
+<input type=text name=text size=70>&nbsp;&nbsp;<input type=submit class=button value="OK"><!--  onclick="collect()"-->
 <p>
             <table cellpadding="0" cellspacing="0" width="100%" border="0"><tr><td width="19%"><br></td><td id="mbanner" width="81%" class="mbanner">
                         <table align="left"><tr><td><img src="new_keyb.gif" width="557" height="195" alt="" border="0" usemap="#newkeyboard"></td></tr></table>

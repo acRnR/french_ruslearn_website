@@ -21,12 +21,13 @@
         {{ message }}
       </div>
       {% endfor %}
-      <form class="form" action="/materials/bigtestb_{{ cat }}" method="post">
+      <form class="form" action="/materials/bigtestb_{{ cat }}" method="post", autocomplete="off">
         <div class="form-group">
           <span class="col-lg-2">{{ question }}</span>
           <div class="col-lg-2">
-            <input type="text" name="answer" placeholder="Answer" class="form-control" autocomplete="off"><!-- keyboardInput"-->
-            <a href="#" onClick="return getVkb('req')"><img style="vertical-align:bottom;" src="keyboard.gif" alt="Виртуальная клавиатура" title="Виртуальная клавиатура" width="42" height="21" border="0"></a>
+            <input type="text" name="answer" placeholder="Answer" class="form-control" ><!-- keyboardInput"-->
+            <a href="{{ url_for('keyboard') }}" target="_blank"><img style="vertical-align:bottom;" src="keyboard.gif"
+            alt="Виртуальная клавиатура" title="Виртуальная клавиатура" width="42" height="21" border="0"></a>
           </div>
         <input type="submit" class="btn btn-primary" value="Submit">
         </div>
