@@ -15,7 +15,7 @@ from sqlalchemy.sql import select
 sess_2 = {}
 mail = Mail()
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__)
 
 app.secret_key = os.urandom(24)
 app.config['DEBUG'] = True
@@ -275,28 +275,28 @@ def quizes_page(categ):
             if not entered_answer:
                 flash("Please enter an answer", "error")
             else:
-                dist = distance(entered_answer, questions[categ][session["current_question"]]["answer"])
+                dist = distance(entered_answer, questions[categ][sess_2["current_question"]]["answer"])
                 if dist == 0:
-                    session['mark'] += 1
+                    sess_2['mark'] += 1
                 elif dist == 1:
-                    session['mark'] += (1/2)
+                    sess_2['mark'] += (1/2)
                 else:
-                    sess_2['mistake_q_'+cs[categ]].append(questions[categ][session["current_question"]]["question"]+' - '+questions[categ][session["current_question"]]["answer"])#print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                    sess_2['mistake_q_'+cs[categ]].append(questions[categ][sess_2["current_question"]]["question"]+' - '+questions[categ][session["current_question"]]["answer"])#print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('quizes_page', categ=categ))
                 else:
                     return render_template("q_success.html", profile_refer=profile_refer, a=0)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        elif session["current_question"] not in questions[categ]:
-            mark = session['mark']
-            session['mark'] = 0
-            session.pop("current_question")
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        elif sess_2["current_question"] not in questions[categ]:
+            mark = sess_2['mark']
+            sess_2['mark'] = 0
+            sess_2.pop("current_question")
             return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark, mistakes=sess_2['mistake_q_'+cs[categ]])
         return render_template("quizes_page.html",
-                               question=questions[categ][session["current_question"]]["question"],
-                               question_number=session["current_question"],
+                               question=questions[categ][sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
                                profile_refer=profile_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_verbs'))
@@ -319,28 +319,28 @@ def quizb_page(categ):
             if not entered_answer:
                 flash("Please enter an answer", "error")
             else:
-                dist = distance(entered_answer, questions[categ][session["current_question"]]["answer"])
+                dist = distance(entered_answer, questions[categ][sess_2["current_question"]]["answer"])
                 if dist == 0:
-                    session['mark'] += 1
+                    sess_2['mark'] += 1
                 elif dist == 1:
-                    session['mark'] += (1/2)
+                    sess_2['mark'] += (1/2)
                 else:
-                    sess_2['mistake_bq_'+cs[categ]].append(questions[categ][session["current_question"]]["question"]+' - '+questions[categ][session["current_question"]]["answer"])
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                    sess_2['mistake_bq_'+cs[categ]].append(questions[categ][sess_2["current_question"]]["question"]+' - '+questions[categ][session["current_question"]]["answer"])
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('quizb_page', categ=categ))
                 else:
                     return render_template("q_success.html", profile_refer=profile_refer, a=0)#, markk=mark, mistakes=)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        elif session["current_question"] not in questions[categ]:
-            mark = session['mark']
-            session['mark'] = 0
-            session.pop("current_question")
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        elif sess_2["current_question"] not in questions[categ]:
+            mark = sess_2['mark']
+            sess_2['mark'] = 0
+            sess_2.pop("current_question")
             return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark, mistakes=sess_2['mistake_bq_'+cs[categ]])
         return render_template("quizes_backw.html",
-                               question=questions[categ][session["current_question"]]["question"],
-                               question_number=session["current_question"],
+                               question=questions[categ][sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
                                profile_refer=profile_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_verbs'))
@@ -357,28 +357,28 @@ def qgenpl(categ):
             if not entered_answer:
                 flash("Please enter an answer", "error")
             else:
-                dist = distance(entered_answer, questions[categ][session["current_question"]]["answer"])
+                dist = distance(entered_answer, questions[categ][sess_2["current_question"]]["answer"])
                 if dist == 0:
-                    session['mark'] += 1
+                    sess_2['mark'] += 1
                 elif dist == 1:
-                    session['mark'] += (1/2)
+                    sess_2['mark'] += (1/2)
                 else:
-                    sess_2['mistake_gq_n'].append(questions[categ][session["current_question"]]["question"].replace('...', questions[categ][session["current_question"]]["answer"]))
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                    sess_2['mistake_gq_n'].append(questions[categ][sess_2["current_question"]]["question"].replace('...', questions[categ][session["current_question"]]["answer"]))
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('qgenpl', categ=categ))
                 else:
                     return render_template("q_success.html", profile_refer=profile_refer, a=0)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        elif session["current_question"] not in questions[categ]:
-            mark = session['mark']
-            session['mark'] = 0
-            session.pop("current_question")
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        elif sess_2["current_question"] not in questions[categ]:
+            mark = sess_2['mark']
+            sess_2['mark'] = 0
+            sess_2.pop("current_question")
             return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark, mistakes=sess_2['mistake_gq_n'])
         return render_template("quiz_genpl.html",
-                               question=questions[categ][session["current_question"]]["question"],
-                               question_number=session["current_question"],
+                               question=questions[categ][sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
                                profile_refer=profile_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_verbs'))
@@ -440,23 +440,23 @@ def test(categ):
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions[categ][session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions[categ][session["current_question"]]["answer"],
+            elif entered_answer != questions[categ][sess_2["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions[categ][sess_2["current_question"]]["answer"],
                       "error")
             else:
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('test', categ=categ))
                 else:
                     return render_template("success.html", profile_refer=profile_refer, a=0)#quizes_refer=quizes_refer, )
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        elif session["current_question"] not in questions[categ]:
-            session.pop('current_question')
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        elif sess_2["current_question"] not in questions[categ]:
+            sess_2.pop('current_question')
             return render_template("success.html", profile_refer=profile_refer, a=1)#quizes_refer=quizes_refer, a=1)
         return render_template("test_page.html",
-                               question=questions[categ][session["current_question"]]["question"],
-                               question_number=session["current_question"],# pg=url_for('test', categ=categ),
+                               question=questions[categ][sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],# pg=url_for('test', categ=categ),
                                profile_refer=profile_refer, cat=categ)#quizes_refer=quizes_refer,
     except NameError:
         redirect(url_for('vocab_verbs'))
@@ -521,28 +521,28 @@ def test_gen(categ):
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions[categ][session["current_question"]]["answer"]:
+            elif entered_answer != questions[categ][sess_2["current_question"]]["answer"]:
                 if categ in hints and sess_2['i'] == 0:
                     flash(hints[categ], 'error')
                     sess_2['i'] += 1
                 else:
-                    flash("La bonne réponse:\n" + questions[categ][session["current_question"]]["answer"],
+                    flash("La bonne réponse:\n" + questions[categ][sess_2["current_question"]]["answer"],
                           "error")
             else:
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('genpl_', categ=categ))
                 else:
                     sess_2['i'] = 0
                     return render_template("success.html", profile_refer=profile_refer, a=0)#quizes_refer=quizes_refer, a=0)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        if session["current_question"] not in questions[categ]:
-            session.pop('current_question')
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        if sess_2["current_question"] not in questions[categ]:
+            sess_2.pop('current_question')
             return render_template("success.html", profile_refer=profile_refer, a=1)#quizes_refer=quizes_refer, a=1)
         return render_template("test_gen.html",
-                               question=questions[categ][session["current_question"]]["question"],
-                               question_number=session["current_question"],
+                               question=questions[categ][sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
                                profile_refer=profile_refer, cat=categ)#quizes_refer=quizes_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_nouns'))
@@ -560,23 +560,23 @@ def test_conj(categ):
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions[categ][session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions[categ][session["current_question"]]["answer"],
+            elif entered_answer != questions[categ][sess_2["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions[categ][sess_2["current_question"]]["answer"],
                       "error")
             else:
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('conj_', categ=categ))
                 else:
                     return render_template("success.html", profile_refer=profile_refer, a=0)#quizes_refer=quizes_refer, a=0)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        if session["current_question"] not in questions[categ]:
-            session.pop('current_question')
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        if sess_2["current_question"] not in questions[categ]:
+            sess_2.pop('current_question')
             return render_template("success.html", profile_refer=profile_refer, a=1)#quizes_refer=quizes_refer, a=1)
         return render_template("test_conj.html",
-                               question=questions[categ][session["current_question"]]["question"],
-                               question_number=session["current_question"],
+                               question=questions[categ][sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
                                profile_refer=profile_refer, cat=categ)#quizes_refer=quizes_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_adverbs'))
@@ -595,23 +595,23 @@ def bigtest(categ):
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions[session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions[session["current_question"]]["answer"],
+            elif entered_answer != questions[sess_2["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions[sess_2["current_question"]]["answer"],
                       "error")
             else:
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('bigtest', categ=categ))
                 else:
                     return render_template("success.html", profile_refer=profile_refer, a=0)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        elif session["current_question"] not in questions:
-            session.pop('current_question')
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        elif sess_2["current_question"] not in questions:
+            sess_2.pop('current_question')
             return render_template("success.html", profile_refer=profile_refer, a=1)  # quizes_refer=quizes_refer, a=1)
         return render_template("bigtest.html",
-                               question=questions[session["current_question"]]["question"],
-                               question_number=session["current_question"], sumup=len(questions), # pg=url_for('test', categ=categ),
+                               question=questions[sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"], sumup=len(questions), # pg=url_for('test', categ=categ),
                                profile_refer=profile_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_verbs'))
@@ -627,22 +627,22 @@ def bigtestb(categ):
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions[session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions[session["current_question"]]["answer"], "error")
+            elif entered_answer != questions[sess_2["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions[sess_2["current_question"]]["answer"], "error")
             else:
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('bigtestb', categ=categ))
                 else:
                     return render_template("success.html", profile_refer=profile_refer, a=0)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        elif session["current_question"] not in questions:
-            session.pop('current_question')
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        elif sess_2["current_question"] not in questions:
+            sess_2.pop('current_question')
             return render_template("success.html", profile_refer=profile_refer, a=1)
         return render_template("bigtestb.html",
-                               question=questions[session["current_question"]]["question"],
-                               question_number=session["current_question"],
+                               question=questions[sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
                                profile_refer=profile_refer, cat=categ, sumup = len(questions))
     except NameError:
         redirect(url_for('vocab_verbs'))
@@ -663,28 +663,28 @@ def biggenpl():
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions[session["current_question"]]["answer"]:
+            elif entered_answer != questions[sess_2["current_question"]]["answer"]:
                 #if categ in hints and sess_2['i'] == 0:
                  #   flash(hints[categ], 'error')
                   #  sess_2['i'] += 1
                 #else:
-                flash("La bonne réponse:\n" + questions[session["current_question"]]["answer"],
+                flash("La bonne réponse:\n" + questions[sess_2["current_question"]]["answer"],
                       "error")
             else:
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('biggenpl'))
                 else:
                     sess_2['i'] = 0
                     return render_template("success.html", profile_refer=profile_refer, a=0)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        if session["current_question"] not in questions:
-            session.pop('current_question')
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        if sess_2["current_question"] not in questions:
+            sess_2.pop('current_question')
             return render_template("success.html", profile_refer=profile_refer, a=1)  # quizes_refer=quizes_refer, a=1)
         return render_template("bigt_gen.html",
-                               question=questions[session["current_question"]]["question"],
-                               question_number=session["current_question"],
+                               question=questions[sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
                                profile_refer=profile_refer, sumup=len(questions))  # quizes_refer=quizes_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_nouns'))
@@ -693,7 +693,7 @@ def biggenpl():
 @app.route('/materials/bigconj_<categ>', methods=['GET', 'POST'])
 @login_required
 def bigconj(categ):
-    # questions_adv = session['quest_b_adv']
+    # questions_adv = sess_2['quest_b_adv']
     questions = sess_2['bigconj'+categ]
     try:
         profile_refer = url_for('profile_page')
@@ -701,23 +701,23 @@ def bigconj(categ):
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Please enter an answer", "error")  # Show error if no answer entered
-            elif entered_answer != questions[session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions[session["current_question"]]["answer"],
+            elif entered_answer != questions[sess_2["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions[sess_2["current_question"]]["answer"],
                       "error")
             else:
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('bigconj', categ=categ))
                 else:
                     return render_template("success.html", profile_refer=profile_refer, a=0)#quizes_refer=quizes_refer, a=0)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        if session["current_question"] not in questions:
-            session.pop('current_question')
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        if sess_2["current_question"] not in questions:
+            sess_2.pop('current_question')
             return render_template("success.html", profile_refer=profile_refer, a=1)#quizes_refer=quizes_refer, a=1)
         return render_template("bigconj.html",
-                               question=questions[session["current_question"]]["question"],
-                               question_number=session["current_question"],
+                               question=questions[sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
                                profile_refer=profile_refer, cat=categ, sumup=len(questions))#quizes_refer=quizes_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_adverbs'))
@@ -730,7 +730,7 @@ def bigconj(categ):
 def vocab_nouns():
     ps = 's'
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
-    session['mark'] = 0
+    sess_2['mark'] = 0
     sess_2['quiz_n'] = quiz_maker(ps, cat, sorting)
     sess_2['questions_n'] = quiz_maker(ps, cat, sorting)
     sess_2['big_t_n'] = big_q_maker(ps, cat, sorting)
@@ -757,7 +757,7 @@ def vocab_verbs():
     cat = ['1_productif', '1_sans_diff', '1_avec_diff', '1_base_altern', '2_productif', '2_improductif']
     bigcat1 = ['1_productif', '1_sans_diff', '1_avec_diff', '1_base_altern']
     bigcat2 = ['2_productif', '2_improductif']
-    session['mark'] = 0
+    sess_2['mark'] = 0
     sess_2['quiz_v'] = quiz_maker(ps, cat, sorting)
     sess_2['questions_v'] = quiz_maker(ps, cat, sorting)
     sess_2['big_t_v1'] = big_q_maker(ps, bigcat1, sorting)
@@ -787,7 +787,7 @@ def vocab_verbs():
 def vocab_adverbs():
     ps = 'adv'
     cat = ['adv']
-    session['mark'] = 0
+    sess_2['mark'] = 0
     sess_2['quiz_adv'] = quiz_maker(ps, cat, sorting)
     sess_2['questions_adv'] = quiz_maker(ps, cat, sorting)
     sess_2['big_t_adv'] = big_q_maker(ps, cat, sorting)
