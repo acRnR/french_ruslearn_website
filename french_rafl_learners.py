@@ -4,7 +4,6 @@ import random
 from flask import Flask, Response, abort
 from flask_mail import Mail
 from flask import url_for, render_template, request, redirect, flash, session, g
-#from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
 from sqlalchemy import create_engine, MetaData, Table
@@ -15,7 +14,7 @@ from sqlalchemy.sql import select
 sess_2 = {}
 mail = Mail()
 
-app = Flask(__name__)
+app = Flask(__name__)#, static_url_path='/static/')
 
 app.secret_key = os.urandom(24)
 app.config['DEBUG'] = True
@@ -65,8 +64,6 @@ security = Security(app, user_datastore)
 
 def distance(a, b):
     # "Calculates the Levenshtein distance between a and b."
-    a = a.replace('&#769;', '́')
-    b = b.replace('&#769;', '́')
     n, m = len(a), len(b)
     if n > m:
         # Make sure n <= m, to use O(min(n,m)) space
