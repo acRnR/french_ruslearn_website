@@ -10,17 +10,15 @@
 .alert-danger {
     display: block;
     max-width: 70%;
-    background-color: #4dfc2b;
-    border-color: #46fafa;
-    color: #8a6d3b;
+    background-color: honeydew;
 }
 
 .form {
     box-sizing: border-box;
-    background-color: white;
+    background-color: lightpink;
 
 }
 
 .menu-main a.current, .menu-main a:hover {
-
+    background-color: antiquewhite;
 }
