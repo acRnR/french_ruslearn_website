@@ -15,7 +15,7 @@
 <h1>{{ vocab_category }}</h1>
 <div class="test-links">
 
-<h2>Les drills longs</h2>
+<h2>les drills longs</h2>
     <p><a href="{{ 'bigtest_'+ ps}}">traduire en français</a> </p>
     <p><a href="{{ 'bigtestb_'+ ps }}">traduire en russe</a> </p>
     {% if vocab_category == 'Le Substantif' %}
@@ -24,6 +24,16 @@
         <p><a href="{{ 'bigconj_v'}}">conjugation présent</a> </p>
         <p><a href="{{ 'bigconj_v1'}}">conjugation présent type I</a> </p>
         <p><a href="{{ 'bigconj_v2'}}">conjugation présent type II</a> </p>
+    {% endif %}
+<h2>les tests d'évaluation longs</h2>
+    <p><a href="{{ 'bigquiz_'+ ps}}">traduire en français</a> </p>
+    <p><a href="{{ 'bigquizb_'+ ps }}">traduire en russe</a> </p>
+    {% if vocab_category == 'Le Substantif' %}
+        <p><a href="{{ 'bigqgenpl'}}">génitif pluriel</a> </p>
+    {% elif vocab_category == 'Le Verbe' %}
+        <p><a href="{{ 'bigqconj_v'}}">conjugation présent</a> </p>
+        <p><a href="{{ 'bigqconj_v1'}}">conjugation présent type I</a> </p>
+        <p><a href="{{ 'bigqconj_v2'}}">conjugation présent type II</a> </p>
     {% endif %}
     <table>
         <tbody>

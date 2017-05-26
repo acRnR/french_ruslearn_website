@@ -205,7 +205,7 @@ def quiz_maker(ps, cat, sorter, func=None):
     result = call_db('rus_words')
     d = sorter(result, ps, cat, func)
     newd = {}
-    for key in d:#{'1d':[['лол', 'lol'], ['шта', 'wut']]}
+    for key in d:
         try:
             quiz_mater = random.sample(d[key], 5)
             quests = {}
@@ -216,7 +216,6 @@ def quiz_maker(ps, cat, sorter, func=None):
                 newd[key] = quests
         except ValueError:
             continue
-    #{ cat : [ 1 : {"question": row[0], "answer": row[1]}, 2 : {"question": row[0], "answer": row[1]} }]
     return newd
 """-------------------------------------------------------------------------"""
 
@@ -232,7 +231,7 @@ def profile_page():
     return render_template('profile_page.html',
                            profile_refer=profile_refer,# quizes_refer=quizes_refer,#test_refer=test_refer,
                            noun_voc=n_v, verb_voc=v_v, adv_voc=a_v, uemail=uemail)
-"""---------------------------------КВИЗЫ----------------------------------------"""
+"""-----------------------Маленькие----------КВИЗЫ----------------------------------------"""
 
 
 @app.route('/materials/quiz_<categ>', methods=['GET', 'POST'])
@@ -259,7 +258,7 @@ def quizes_page(categ):
                 elif dist == 1:
                     sess_2['mark'] += (1/2)
                 else:
-                    sess_2['mistake_q_'+cs[categ]].append(questions[categ][sess_2["current_question"]]["question"]+' - '+questions[categ][session["current_question"]]["answer"])#print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
+                    sess_2['mistake_q_'+cs[categ]].append(questions[categ][sess_2["current_question"]]["question"]+' - '+questions[categ][sess_2["current_question"]]["answer"])#print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
                 sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
                 if sess_2["current_question"] in questions:
                     redirect(url_for('quizes_page', categ=categ))
@@ -399,6 +398,161 @@ def qconj(categ):
                                profile_refer=profile_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_verbs'))
+"""-----------------------БОЛЬШИЕ----------КВИЗЫ----------------------------------------"""
+
+
+@app.route('/materials/bigquiz_<categ>', methods=['GET', 'POST'])
+@login_required
+def bigquiz(categ):
+    questions = sess_2['bigq_'+categ]
+    try:
+        profile_refer = url_for('profile_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")
+            else:
+                dist = distance(entered_answer, questions[sess_2["current_question"]]["answer"])
+                if dist == 0:
+                    sess_2['mark'] += 1
+                elif dist == 1:
+                    sess_2['mark'] += (1/2)
+                else:
+                    sess_2['mistake_q_'+categ].append(questions[sess_2["current_question"]]["question"]+' - '+questions[sess_2["current_question"]]["answer"])
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
+                    redirect(url_for('bigquiz', categ=categ))
+                else:
+                    return render_template("q_success.html", profile_refer=profile_refer, a=0)
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        elif sess_2["current_question"] not in questions:
+            mark = sess_2['mark']
+            sess_2['mark'] = 0
+            sess_2.pop("current_question")
+            return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark, mistakes=sess_2['mistake_q_'+categ])
+        return render_template("bigquiz.html",
+                               question=questions[sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
+                               profile_refer=profile_refer, cat=categ, sumup=len(questions))
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+
+@app.route('/materials/bigquizb_<categ>', methods=['GET', 'POST'])
+@login_required
+def bigquizb(categ):
+    questions = sess_2['big_qb_' + categ]
+    try:
+        profile_refer = url_for('profile_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")
+            else:
+                dist = distance(entered_answer, questions[sess_2["current_question"]]["answer"])
+                if dist == 0:
+                    sess_2['mark'] += 1
+                elif dist == 1:
+                    sess_2['mark'] += (1/2)
+                else:
+                    sess_2['mistake_bq_' + categ].append(questions[sess_2["current_question"]]["question"]+' - '+questions[sess_2["current_question"]]["answer"])
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
+                    redirect(url_for('bigquizb', categ=categ))
+                else:
+                    return render_template("q_success.html", profile_refer=profile_refer, a=0)
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        elif sess_2["current_question"] not in questions:
+            mark = sess_2['mark']
+            sess_2['mark'] = 0
+            sess_2.pop("current_question")
+            return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark, mistakes=sess_2['mistake_bq_'+categ])
+        return render_template("bigquizb.html",
+                               question=questions[sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
+                               profile_refer=profile_refer, cat=categ, sumup=len(questions))
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+
+@app.route('/materials/bigqgenpl', methods=['GET', 'POST'])
+@login_required
+def bigqgenpl():
+    questions = sess_2['bigqgenpl']
+    try:
+        profile_refer = url_for('profile_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")
+            else:
+                dist = distance(entered_answer, questions[sess_2["current_question"]]["answer"])
+                if dist == 0:
+                    sess_2['mark'] += 1
+                elif dist == 1:
+                    sess_2['mark'] += (1/2)
+                else:
+                    sess_2['mistake_gq_n'].append(questions[sess_2["current_question"]]["question"].replace('...', questions[sess_2["current_question"]]["answer"]))
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
+                    redirect(url_for('bigqgenpl'))
+                else:
+                    return render_template("q_success.html", profile_refer=profile_refer, a=0)
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        elif sess_2["current_question"] not in questions:
+            mark = sess_2['mark']
+            sess_2['mark'] = 0
+            sess_2.pop("current_question")
+            return render_template("q_success.html", profile_refer=profile_refer, a=1, markk=mark, mistakes=sess_2['mistake_gq_n'])
+        return render_template("bigq_gen.html",
+                               question=questions[sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
+                               profile_refer=profile_refer, sumup=len(questions))
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
+
+@app.route('/materials/bigqconj_<categ>', methods=['GET', 'POST'])
+@login_required
+def bigqconj(categ):
+    questions = sess_2['bigqconj'+categ]
+    try:
+        profile_refer = url_for('profile_page')
+        if request.method == "POST":
+            entered_answer = request.form.get('answer', '')
+            if not entered_answer:
+                flash("Please enter an answer", "error")
+            else:
+                dist = distance(entered_answer, questions[session["current_question"]]["answer"])
+                if dist == 0:
+                    session['mark'] += 1
+                elif dist == 1:
+                    session['mark'] += (1/2)
+                else:
+                    sess_2['mistake_cq_v'].append(questions[session["current_question"]]["question"].replace('...', questions[sess_2["current_question"]]["answer"]))
+                session["current_question"] = str(int(session["current_question"]) + 1)
+                if session["current_question"] in questions:
+                    redirect(url_for('bigqconj', categ=categ))
+                else:
+                    return render_template("q_success.html", profile_refer=profile_refer, a=0)
+        if "current_question" not in session:
+            session["current_question"] = "1"
+        elif session["current_question"] not in questions:
+            mark = session['mark']
+            session['mark'] = 0
+            session.pop("current_question")
+            return render_template("q_success.html", profile_refer=profile_refer, a=1,
+                                   markk=mark, mistakes=sess_2['mistake_cq_v'])
+        return render_template("bigq_conj.html",
+                               question=questions[session["current_question"]]["question"],
+                               question_number=session["current_question"],
+                               profile_refer=profile_refer, cat=categ, sumup=len(questions))
+    except NameError:
+        redirect(url_for('vocab_verbs'))
+
 """-----------------------------МАЛЕНЬКИЕ-----ТЕСТЫ---------------------------------------"""
 
 
@@ -477,7 +631,7 @@ def testb(categ):
 
 sess_2['i'] = 0
 
-# todo: добавить подсказки правил
+
 @app.route('/materials/genpl_<categ>', methods=['GET', 'POST'])
 @login_required
 def test_gen(categ):
@@ -619,11 +773,6 @@ def bigtestb(categ):
 @app.route('/materials/biggenpl', methods=['GET', 'POST'])
 @login_required
 def biggenpl():
-    hints = {
-        '1d': u'l’apparition de la voyelle mobile pour tous les mots présentant une accumulation de consonnes avec la désinence Ø\nles mots à accent non final, tels que гóстья «l’invitée», ont une forme de Génitif pl. en -ий\nles mots à accent final, tels que судья́ «le juge», ont une forme de Génitif pl. en -eй\ndans une séquence «voyelle + й + consonne + a», le mécanisme de la voyelle mobile fait que le -й- est remplacé par un -e-\n!Exceptions! Il y a trois mots en -ня où le /n\'/ reste mou au Gen. pl., si l’accent est final, -ня́, on a une désinence -éй',
-        'm': u'Le Génitif pluriel, outre les désinences de base dans les Types I et II, peut avoir une désinence Ø. La désinence Ø apparaît dans les mots dont le thème change au pluriel (mots en -анин / -янин, en -ёнок / -онок et en -ин)\nUn certain nombre de mots ont une désinence Ø au Génitif pl. Le Génitif pl. sera donc semblable au Nominatif sg., mis à part les quelques cas où l’accent différencie les deux formes',
-        'n': u'Une série de neutre en -o avec élargissement du thème par /j/, comme les substantifs masculins du type брат, le Génitif pl. de ces mots est -ьев\nLe Génitif pl. a une désinence en -ев / -ов (outre les mots de cette série) dans deux mots en -ко mentionnés ci-dessus et dans quelques mots en -ье\nLa désinence type pour cette déclinaison, la désinence Ø, peut entraîner l’apparition d’une voyelle mobile\nIl faut prêter attention aux mots en -ье, ceux-ci ont une forme de Génitif pl. en -ий'
-    }
     questions = sess_2['biggenpl']
     try:
         profile_refer = url_for('profile_page')
@@ -697,12 +846,15 @@ def vocab_nouns():
     sess_2['quiz_n'] = quiz_maker(ps, cat, sorting)
     sess_2['questions_n'] = quiz_maker(ps, cat, sorting)
     sess_2['big_t_n'] = big_q_maker(ps, cat, sorting)
+    sess_2['bigq_n'] = big_q_maker(ps, cat, sorting)
     sess_2['quizb_n'] = quiz_maker(ps, cat, sorting_back)
     sess_2['quest_b_n'] = quiz_maker(ps, cat, sorting_back)
     sess_2['big_tb_n'] = big_q_maker(ps, cat, sorting_back)
+    sess_2['big_qb_n'] = big_q_maker(ps, cat, sorting_back)
     sess_2['qgenpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     sess_2['ex_genpl'] = quiz_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     sess_2['biggenpl'] = big_q_maker(ps, cat, gramm_sorting, ex_genpl_maker)
+    sess_2['bigqgenpl'] = big_q_maker(ps, cat, gramm_sorting, ex_genpl_maker)
     sess_2['mistake_q_n'] = []
     sess_2['mistake_bq_n'] = []
     sess_2['mistake_gq_n'] = []
@@ -725,12 +877,17 @@ def vocab_verbs():
     sess_2['questions_v'] = quiz_maker(ps, cat, sorting)
     sess_2['big_t_v1'] = big_q_maker(ps, bigcat1, sorting)
     sess_2['big_t_v2'] = big_q_maker(ps, bigcat2, sorting)
-    sess_2['big_t_v'] = big_q_maker(ps, cat, sorting)
+    sess_2['bigq_v1'] = big_q_maker(ps, bigcat1, sorting)
+    sess_2['bigq_v2'] = big_q_maker(ps, bigcat2, sorting)
+    sess_2['bigq_v'] = big_q_maker(ps, cat, sorting)
     sess_2['quizb_v'] = quiz_maker(ps, cat, sorting_back)
     sess_2['quest_b_v'] = quiz_maker(ps, cat, sorting_back)
     sess_2['big_tb_v1'] = big_q_maker(ps, bigcat1, sorting_back)
     sess_2['big_tb_v2'] = big_q_maker(ps, bigcat2, sorting_back)
     sess_2['big_tb_v'] = big_q_maker(ps, cat, sorting_back)
+    sess_2['big_qb_v1'] = big_q_maker(ps, bigcat1, sorting_back)
+    sess_2['big_qb_v2'] = big_q_maker(ps, bigcat2, sorting_back)
+    sess_2['big_qb_v'] = big_q_maker(ps, cat, sorting_back)
     sess_2['qconj'] = quiz_maker(ps, cat, gramm_sorting, prs_conj_maker)
     sess_2['ex_conj'] = quiz_maker(ps, cat, gramm_sorting, prs_conj_maker)
     sess_2['bigconjv'] = big_q_maker(ps, cat, gramm_sorting, prs_conj_maker)
@@ -739,6 +896,10 @@ def vocab_verbs():
     sess_2['mistake_q_v'] = []
     sess_2['mistake_bq_v'] = []
     sess_2['mistake_cq_v'] = []
+
+    sess_2['bigqconjv'] = big_q_maker(ps, cat, gramm_sorting, prs_conj_maker)
+    sess_2['bigqconjv1'] = big_q_maker(ps, bigcat1, gramm_sorting, prs_conj_maker)
+    sess_2['bigqconjv2'] = big_q_maker(ps, bigcat2, gramm_sorting, prs_conj_maker)
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     return render_template('vocab.html', uemail=useremailget(),
@@ -754,9 +915,11 @@ def vocab_adverbs():
     sess_2['quiz_adv'] = quiz_maker(ps, cat, sorting)
     sess_2['questions_adv'] = quiz_maker(ps, cat, sorting)
     sess_2['big_t_adv'] = big_q_maker(ps, cat, sorting)
+    sess_2['bigq_adv'] = big_q_maker(ps, cat, sorting)
     sess_2['quizb_adv'] = quiz_maker(ps, cat, sorting_back)
     sess_2['quest_b_adv'] = quiz_maker(ps, cat, sorting_back)
     sess_2['big_tb_adv'] = big_q_maker(ps, cat, sorting_back)
+    sess_2['big_qb_adv'] = big_q_maker(ps, cat, sorting_back)
     sess_2['mistake_q_adv'] = []
     sess_2['mistake_bq_adv'] = []
     voc = voc_maker(ps, cat)
