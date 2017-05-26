@@ -10,7 +10,7 @@
 {{ uemail }}
 <ul class="menu-main">
   <li><a href="{{ profile_refer }}">mon compte</a></li>
-  <li><a href="{{ return_refer }}">déconnexion</a></li>
+  <li><a href="{{  url_for_security('logout') }}">déconnexion</a></li>
 </ul>
 <h1>{{ vocab_category }}</h1>
 <div class="test-links">
