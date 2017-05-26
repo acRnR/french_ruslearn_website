@@ -3,7 +3,7 @@ import os
 import random
 from flask import Flask
 from flask_mail import Mail
-from flask import url_for, render_template, request, redirect, flash, session, g
+from flask import url_for, render_template, request, redirect, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
 from sqlalchemy import create_engine, MetaData, Table
@@ -126,7 +126,6 @@ def sorting(data, ps, categories, f=None, n=None):
     return d
 
 
-
 def sorting_back(data, ps, categories, f=None, n=None):
     d = {}
     if n == 1:
@@ -189,14 +188,16 @@ def prs_conj_maker():
 def big_q_maker(ps, cat, sorter, func=None):
     result = call_db('rus_words')
     d = sorter(result, ps, cat, func, 1)
-    quests = {}
     num = 1
-    for key in d:  # {'1d':[['лол', 'lol'], ['шта', 'wut']]}
-        try:
-            quests[str(num)] = {"question": key, "answer": d[key]}
-            num += 1
-        except ValueError:
-            continue
+    try:
+        quiz_mater = random.sample(list(d), 20)
+    except ValueError:
+        quiz_mater = list(d)
+    quests = {}
+    for key in quiz_mater:
+        quests[str(num)] = {"question": key, "answer": d[key]}
+        num += 1
+
     return quests
 
 
@@ -219,8 +220,6 @@ def quiz_maker(ps, cat, sorter, func=None):
     return newd
 """-------------------------------------------------------------------------"""
 
-"""-------------------------------------------------------------------"""
-
 
 @app.route('/')
 @login_required
@@ -235,7 +234,7 @@ def profile_page():
                            noun_voc=n_v, verb_voc=v_v, adv_voc=a_v, uemail=uemail)
 """---------------------------------КВИЗЫ----------------------------------------"""
 
-# todo: выводить в конце квиза ошибки
+
 @app.route('/materials/quiz_<categ>', methods=['GET', 'POST'])
 @login_required
 def quizes_page(categ):
