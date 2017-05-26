@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <link href="style.css" type="text/css" rel="stylesheet">
+    <script language="JavaScript" src="/static/common.js"> </script>
+    <script language="JavaScript" src="/static/main.js"> </script>
+    <link href="/static/css/stylesheet.css" type="text/css" rel="stylesheet">
     <meta charset="UTF-8">
-    <title>Контрольные работы</title>
+    <title>test d'évaluation</title>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <h3 class="text-muted">Mettez le verbe dans une forme propre</h3>
+        <h3 class="text-muted">mettez le verbe dans une forme propre</h3>
     </div>
     <hr/>
     {% for category, message in get_flashed_messages(with_categories=true) %}
@@ -16,11 +18,12 @@
         {{ message }}
     </div>
     {% endfor %}
-    <form class="form" action="/materials/qconj_{{ cat }}" method="post">
+    <form class="form" action="/materials/qconj_{{ cat }}" method="post" autocomplete="off">
     <div class="form-group">
-        <span class="col-lg-2">{{ question_number }}. {{ question|safe }}</span>
+        <span class="col-lg-2">{{ question_number }}. {{ question }}</span>
         <div class="col-lg-2">
-            <input type="text" name="answer" placeholder="Answer" class="form-control">
+            <a href="{{ url_for('keyboard') }}" target="_blank"><img style="vertical-align:bottom;" src="/static/pic/keyboard.gif"
+            alt="Виртуальная клавиатура" title="Виртуальная клавиатура" width="42" height="21" border="0"></a>
         </div>
         <input type="submit" class="btn btn-primary" value="Submit">
     </div>

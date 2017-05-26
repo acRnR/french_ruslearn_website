@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <link href="style.css" type="text/css" rel="stylesheet">
+    <link href="/static/stylesheet.css" type="text/css" rel="stylesheet">
     <meta charset="UTF-8">
-    <title>Личный кабинет</title>
+    <title>Mon compte</title>
 </head>
 <body>
+{{ uemail }}
 <ul class="menu-main">
-  <li><a href="" class="current">Личный кабинет</a></li>
-  <li><a href="{{ url_for_security('logout') }}">Выйти</a></li>
+  <li><a href="" class="current">Mon compte</a></li>
+  <li><a href="{{ url_for_security('logout') }}">Déconnexion</a></li>
 </ul>
 <div class="themes">
     <h2>Les Matériaux</h2>

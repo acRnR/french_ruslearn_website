@@ -1,0 +1,24 @@
+* {
+    border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.body {
+    background-color: coral;
+}
+
+
+.alert-danger {
+    display: block;
+    max-width: 70%;
+    background-color: honeydew;
+}
+
+.form {
+    box-sizing: border-box;
+    background-color: lightpink;
+
+}
+
+.menu-main a.current, .menu-main a:hover {
+    background-color: antiquewhite;
+}

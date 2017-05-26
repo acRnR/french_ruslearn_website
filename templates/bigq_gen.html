@@ -3,6 +3,7 @@
 <head>
     <script language="JavaScript" src="/static/common.js"> </script>
     <script language="JavaScript" src="/static/main.js"> </script>
+    <!--link href="https://fonts.googleapis.com/css?family=PT+Mono&amp;subset=cyrillic,latin-ext" rel="stylesheet"-->
     <link href="/static/stylesheet.css" type="text/css" rel="stylesheet">
     <meta charset="UTF-8">
     <title>test d'évaluation</title>
@@ -10,17 +11,18 @@
 <body>
 <div class="container">
     <div class="header">
-        <h3 class="text-muted">traduisez-le en russe</h3>
+        <h3 class="text-muted">mettez le substantif dans une forme de génitif</h3>
     </div>
+    <p>question {{ question_number }} de {{ sumup }}</p>
     <hr/>
     {% for category, message in get_flashed_messages(with_categories=true) %}
     <div class="alert alert-danger">
         {{ message }}
     </div>
     {% endfor %}
-    <form class="form" action="/materials/quizb_{{ cat }}" method="post" autocomplete="off">
+    <form class="form" action="/materials/bigqgenpl" method="post" autocomplete="off">
     <div class="form-group">
-        <span class="col-lg-2">{{ question_number }}. {{ question }}</span>
+        <span class="col-lg-2">{{ question }}</span>
         <div class="col-lg-2">
             <input type="text" name="answer" placeholder="Answer" class="form-control">
             <a href="{{ url_for('keyboard') }}" target="_blank"><img style="vertical-align:bottom;" src="/static/keyboard.gif"
