@@ -20,25 +20,21 @@ lang = 'russian';
 </head>
 <body onkeydown="click_ie(event);">
 
-
-<center>
 <h3>Le clavier virtuel</h3>
-
+<div class="explain">
     <p>Tapez votre réponse</p>
     <p>(le signe de stress se trouve en haut à gauche)</p>
     <p>Copiez votre réponse et collez-le dans le formulaire dans l'onglet avec la question</p>
-
+</div>
 <form name=lex method="get" action="{{ kekurl }}">
 
-<!--  keyboard-->
 <SCRIPT LANGUAGE=javascript FOR=textEl EVENT=onchange>
     click_ie(event);
 </SCRIPT>
 <SCRIPT LANGUAGE=javascript FOR=textEl EVENT=onfocus>
     click_ie(event);
 </SCRIPT>
-<input type=text name=text size=70>&nbsp;&nbsp;<!--  onclick="collect()"-->
-<p>
+<input type=text name=text size=70>
             <table cellpadding="0" cellspacing="0" width="100%" border="0"><tr><td width="19%"><br></td><td id="mbanner" width="81%" class="mbanner">
                         <table align="left"><tr><td><img src="./static/new_keyboard.gif" width="557" height="195" alt="" border="0" usemap="#newkeyboard"></td></tr></table>
                         <map name="newkeyboard">
@@ -107,10 +103,8 @@ lang = 'russian';
                             <area alt="" coords="421,158,456,193" href="JavaScript:ping('\\');">
                             <area alt="" coords="1,158,57,193" href="JavaScript:ping('CLEAR_ALL')">
                         </map>
-            </td></tr></table>
-<!--  /keyboard-->
+            </td></tr>
+            </table>
 </form>
-</center>
-
 </body>
 </html>

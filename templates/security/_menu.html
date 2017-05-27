@@ -1,5 +1,6 @@
+<link href="/static/stylesheet.css" type="text/css" rel="stylesheet">
 {% if security.registerable or security.recoverable or security.confirmable %}
-<h2>Menu</h2>
+<div class="menu-main">
 <ul>
   <li><a href="{{ url_for_security('login') }}{% if 'next' in request.args %}?next={{ request.args.next|urlencode }}{% endif %}">Se connecter</a></li>
   {% if security.registerable %}
@@ -13,3 +14,4 @@
   {% endif %}
 </ul>
 {% endif %}
+</div>

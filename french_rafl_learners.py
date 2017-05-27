@@ -10,7 +10,7 @@ from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.sql import select
 
-"""------------------------------------------------------------------------------"""
+"""---------------- Настройки конфигураций и создание связи с базой данных пользователей ----------------------------"""
 sess_2 = {}
 mail = Mail()
 
@@ -52,7 +52,7 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
 
-"""------------------------------------------------------------------------------"""
+"""--------------------------Функции, получающие данные для выведения на страницах сайта-----------------------------"""
 
 
 def distance(a, b):
@@ -217,7 +217,7 @@ def quiz_maker(ps, cat, sorter, func=None):
         except ValueError:
             continue
     return newd
-"""-------------------------------------------------------------------------"""
+"""--------------------------------Заглавная страница и страница клавиатуры------------------------------------------"""
 
 
 @app.route('/')
@@ -229,9 +229,15 @@ def profile_page():
     v_v = url_for('vocab_verbs')
     a_v = url_for('vocab_adverbs')
     return render_template('profile_page.html',
-                           profile_refer=profile_refer,# quizes_refer=quizes_refer,#test_refer=test_refer,
+                           profile_refer=profile_refer,
                            noun_voc=n_v, verb_voc=v_v, adv_voc=a_v, uemail=uemail)
-"""-----------------------Маленькие----------КВИЗЫ----------------------------------------"""
+
+
+@app.route('/keyboard', methods=['GET'])
+@login_required
+def keyboard():
+    return render_template('reqvkb.html')
+"""-------------------------Страницы с маленькими квизами (тестами на оценку)----------------------------------------"""
 
 
 @app.route('/materials/quiz_<categ>', methods=['GET', 'POST'])
@@ -250,7 +256,7 @@ def quizes_page(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[categ][sess_2["current_question"]]["answer"])
                 if dist == 0:
@@ -258,7 +264,7 @@ def quizes_page(categ):
                 elif dist == 1:
                     sess_2['mark'] += (1/2)
                 else:
-                    sess_2['mistake_q_'+cs[categ]].append(questions[categ][sess_2["current_question"]]["question"]+' - '+questions[categ][sess_2["current_question"]]["answer"])#print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
+                    sess_2['mistake_q_'+cs[categ]].append(questions[categ][sess_2["current_question"]]["question"]+' - '+questions[categ][sess_2["current_question"]]["answer"])
                 sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
                 if sess_2["current_question"] in questions:
                     redirect(url_for('quizes_page', categ=categ))
@@ -294,7 +300,7 @@ def quizb_page(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[categ][sess_2["current_question"]]["answer"])
                 if dist == 0:
@@ -302,12 +308,12 @@ def quizb_page(categ):
                 elif dist == 1:
                     sess_2['mark'] += (1/2)
                 else:
-                    sess_2['mistake_bq_'+cs[categ]].append(questions[categ][sess_2["current_question"]]["question"]+' - '+questions[categ][session["current_question"]]["answer"])
+                    sess_2['mistake_bq_'+cs[categ]].append(questions[categ][sess_2["current_question"]]["question"]+' - '+questions[categ][sess_2["current_question"]]["answer"])
                 sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
                 if sess_2["current_question"] in questions:
                     redirect(url_for('quizb_page', categ=categ))
                 else:
-                    return render_template("q_success.html", profile_refer=profile_refer, a=0)#, markk=mark, mistakes=)
+                    return render_template("q_success.html", profile_refer=profile_refer, a=0)
         if "current_question" not in sess_2:
             sess_2["current_question"] = "1"
         elif sess_2["current_question"] not in questions[categ]:
@@ -332,7 +338,7 @@ def qgenpl(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[categ][sess_2["current_question"]]["answer"])
                 if dist == 0:
@@ -340,7 +346,7 @@ def qgenpl(categ):
                 elif dist == 1:
                     sess_2['mark'] += (1/2)
                 else:
-                    sess_2['mistake_gq_n'].append(questions[categ][sess_2["current_question"]]["question"].replace('...', questions[categ][session["current_question"]]["answer"]))
+                    sess_2['mistake_gq_n'].append(questions[categ][sess_2["current_question"]]["question"].replace('...', questions[categ][sess_2["current_question"]]["answer"]))
                 sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
                 if sess_2["current_question"] in questions:
                     redirect(url_for('qgenpl', categ=categ))
@@ -370,35 +376,35 @@ def qconj(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
-                dist = distance(entered_answer, questions[categ][session["current_question"]]["answer"])
+                dist = distance(entered_answer, questions[categ][sess_2["current_question"]]["answer"])
                 if dist == 0:
-                    session['mark'] += 1
+                    sess_2['mark'] += 1
                 elif dist == 1:
-                    session['mark'] += (1/2)
+                    sess_2['mark'] += (1/2)
                 else:
-                    sess_2['mistake_cq_v'].append(questions[categ][session["current_question"]]["question"].replace('...', questions[categ][session["current_question"]]["answer"]))
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                    sess_2['mistake_cq_v'].append(questions[categ][sess_2["current_question"]]["question"].replace('...', questions[categ][sess_2["current_question"]]["answer"]))
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('qconj', categ=categ))
                 else:
                     return render_template("q_success.html", profile_refer=profile_refer, a=0)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        elif session["current_question"] not in questions[categ]:
-            mark = session['mark']
-            session['mark'] = 0
-            session.pop("current_question")
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        elif sess_2["current_question"] not in questions[categ]:
+            mark = sess_2['mark']
+            sess_2['mark'] = 0
+            sess_2.pop("current_question")
             return render_template("q_success.html", profile_refer=profile_refer, a=1,
                                    markk=mark, mistakes=sess_2['mistake_cq_v'])
         return render_template("quiz_conj.html",
-                               question=questions[categ][session["current_question"]]["question"],
-                               question_number=session["current_question"],
+                               question=questions[categ][sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
                                profile_refer=profile_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_verbs'))
-"""-----------------------БОЛЬШИЕ----------КВИЗЫ----------------------------------------"""
+"""---------------------------------------Страницы с большими квизами------------------------------------------------"""
 
 
 @app.route('/materials/bigquiz_<categ>', methods=['GET', 'POST'])
@@ -410,7 +416,7 @@ def bigquiz(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[sess_2["current_question"]]["answer"])
                 if dist == 0:
@@ -448,7 +454,7 @@ def bigquizb(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[sess_2["current_question"]]["answer"])
                 if dist == 0:
@@ -486,7 +492,7 @@ def bigqgenpl():
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[sess_2["current_question"]]["answer"])
                 if dist == 0:
@@ -524,36 +530,36 @@ def bigqconj(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
-                dist = distance(entered_answer, questions[session["current_question"]]["answer"])
+                dist = distance(entered_answer, questions[sess_2["current_question"]]["answer"])
                 if dist == 0:
-                    session['mark'] += 1
+                    sess_2['mark'] += 1
                 elif dist == 1:
-                    session['mark'] += (1/2)
+                    sess_2['mark'] += (1/2)
                 else:
-                    sess_2['mistake_cq_v'].append(questions[session["current_question"]]["question"].replace('...', questions[sess_2["current_question"]]["answer"]))
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                    sess_2['mistake_cq_v'].append(questions[sess_2["current_question"]]["question"].replace('...', questions[sess_2["current_question"]]["answer"]))
+                    sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('bigqconj', categ=categ))
                 else:
                     return render_template("q_success.html", profile_refer=profile_refer, a=0)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        elif session["current_question"] not in questions:
-            mark = session['mark']
-            session['mark'] = 0
-            session.pop("current_question")
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        elif sess_2["current_question"] not in questions:
+            mark = sess_2['mark']
+            sess_2['mark'] = 0
+            sess_2.pop("current_question")
             return render_template("q_success.html", profile_refer=profile_refer, a=1,
                                    markk=mark, mistakes=sess_2['mistake_cq_v'])
         return render_template("bigq_conj.html",
-                               question=questions[session["current_question"]]["question"],
-                               question_number=session["current_question"],
+                               question=questions[sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
                                profile_refer=profile_refer, cat=categ, sumup=len(questions))
     except NameError:
         redirect(url_for('vocab_verbs'))
 
-"""-----------------------------МАЛЕНЬКИЕ-----ТЕСТЫ---------------------------------------"""
+"""---------------------------Страницы с маленькими упражнениями (тестами не на оценку)------------------------------"""
 
 
 @app.route('/materials/test_<categ>', methods=['GET', 'POST'])
@@ -609,22 +615,22 @@ def testb(categ):
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
                 flash("Entrez votre réponse, s'il vous plaît", "error")
-            elif entered_answer != questions[categ][session["current_question"]]["answer"]:
-                flash("La bonne réponse:\n" + questions[categ][session["current_question"]]["answer"], "error")
+            elif entered_answer != questions[categ][sess_2["current_question"]]["answer"]:
+                flash("La bonne réponse:\n" + questions[categ][sess_2["current_question"]]["answer"], "error")
             else:
-                session["current_question"] = str(int(session["current_question"]) + 1)
-                if session["current_question"] in questions:
+                sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
+                if sess_2["current_question"] in questions:
                     redirect(url_for('testb', categ=categ))
                 else:
                     return render_template("success.html", profile_refer=profile_refer, a=0)
-        if "current_question" not in session:
-            session["current_question"] = "1"
-        elif session["current_question"] not in questions[categ]:
-            session.pop('current_question')
+        if "current_question" not in sess_2:
+            sess_2["current_question"] = "1"
+        elif sess_2["current_question"] not in questions[categ]:
+            sess_2.pop('current_question')
             return render_template("success.html", profile_refer=profile_refer, a=1)
         return render_template("test_backw.html",
-                               question=questions[categ][session["current_question"]]["question"],
-                               question_number=session["current_question"],
+                               question=questions[categ][sess_2["current_question"]]["question"],
+                               question_number=sess_2["current_question"],
                                profile_refer=profile_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_verbs'))
@@ -704,7 +710,7 @@ def test_conj(categ):
                                profile_refer=profile_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_adverbs'))
-"""------------------------------БОЛЬШИЕ-------------ТЕСТЫ----------------------------------------------"""
+"""-----------------------------------Страницы с большими упражнениями-----------------------------------------------"""
 
 
 @app.route('/materials/bigtest_<categ>', methods=['GET', 'POST'])
@@ -812,7 +818,7 @@ def bigconj(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             elif entered_answer != questions[sess_2["current_question"]]["answer"]:
                 flash("La bonne réponse:\n" + questions[sess_2["current_question"]]["answer"],
                       "error")
@@ -834,13 +840,15 @@ def bigconj(categ):
     except NameError:
         redirect(url_for('vocab_adverbs'))
 
-"""-----------------------------------МАТЕРИАЛЫ-----------------------------------------------------"""
+"""-------------------------------Страницы с материалами по каждой теме/части речи-----------------------------------"""
 
 
 @app.route('/materials/vocab_nouns')
 @login_required
 def vocab_nouns():
     ps = 's'
+    cats = {'1d': 'Premier declinasion', 'm': 'Les masculins', 'n': 'Les neutre', '3d': 'Troiseme declinasion',
+           'sg_tantum': 'Singularia Tantum', 'pl_tantum': 'Pluralia tantum'}
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
     sess_2['mark'] = 0
     sess_2['quiz_n'] = quiz_maker(ps, cat, sorting)
@@ -861,14 +869,19 @@ def vocab_nouns():
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
-                           profile_refer=profile_refer,
-                           mama=cat, voc=voc, vocab_category='Le Substantif', ps='n', uemail=useremailget())
+                           profile_refer=profile_refer, cats=cats,
+                           mama=cat, voc=voc, vocab_category='Le Substantif', ps='n', uemail=useremailget(),
+                           noun_voc=url_for('vocab_nouns'), verb_voc='vocab_verbs', adv_voc=url_for('vocab_adverbs'))
 
 
 @app.route('/materials/vocab_verbs')
 @login_required
 def vocab_verbs():
     ps = 'v'
+    cats = {'1_productif': 'Premiere conjugasion. Types productifs', '1_sans_diff': 'Premiere conjugasion. Types Improductifs. Bases sans différentiel',
+            '1_avec_diff': 'Premiere conjugasion. Types improductifs. Bases avec différentiel',
+            '1_base_altern': 'Premiere conjugasion. Types Improductifs. Bases alternantes',
+            '2_productif': 'Premiere conjugasion. Types productifs','2_improductif': 'Premiere conjugasion. Types improductifs'}
     cat = ['1_productif', '1_sans_diff', '1_avec_diff', '1_base_altern', '2_productif', '2_improductif']
     bigcat1 = ['1_productif', '1_sans_diff', '1_avec_diff', '1_base_altern']
     bigcat2 = ['2_productif', '2_improductif']
@@ -902,14 +915,16 @@ def vocab_verbs():
     sess_2['bigqconjv2'] = big_q_maker(ps, bigcat2, gramm_sorting, prs_conj_maker)
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
-    return render_template('vocab.html', uemail=useremailget(),
-                           profile_refer=profile_refer, mama=cat, voc=voc, vocab_category='Le Verbe', ps='v')
+    return render_template('vocab.html', uemail=useremailget(), cats = cats,
+                           profile_refer=profile_refer, mama=cat, voc=voc, vocab_category='Le Verbe', ps='v',
+                           noun_voc=url_for('vocab_nouns'), verb_voc='vocab_verbs', adv_voc=url_for('vocab_adverbs'))
 
 
 @app.route('/materials/vocab_adverbs')
 @login_required
 def vocab_adverbs():
     ps = 'adv'
+    cats = {'adv': ''}
     cat = ['adv']
     sess_2['mark'] = 0
     sess_2['quiz_adv'] = quiz_maker(ps, cat, sorting)
@@ -925,15 +940,10 @@ def vocab_adverbs():
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
-                           profile_refer=profile_refer, uemail=useremailget(),
-                           mama=cat, voc=voc, vocab_category="L'Adverbe", ps='adv')
-
-
-@app.route('/keyboard', methods=['GET'])
-@login_required
-def keyboard():
-    return render_template('reqvkb.html')
+                           profile_refer=profile_refer, uemail=useremailget(), cats=cats,
+                           mama=cat, voc=voc, vocab_category="L'Adverbe", ps='adv',
+                           noun_voc=url_for('vocab_nouns'), verb_voc='vocab_verbs', adv_voc=url_for('vocab_adverbs'))
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

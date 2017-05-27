@@ -8,8 +8,23 @@
 <body>
 {{ uemail }}
 <ul class="menu-main">
-  <li><a href="{{ profile_refer }}">mon compte</a></li>
-  <li><a href="{{  url_for_security('logout') }}">déconnexion</a></li>
+  <li><a href="{{ profile_refer }}">Mon compte</a></li>
+  {% if vocab_category == 'Le Substantif' %}
+  <li><a href="{{ noun_voc }}" class="current">Le Substantif</a></li>
+  {% else %}
+  <li><a href="{{ noun_voc }}">Le Substantif</a></li>
+  {% endif %}
+  {% if vocab_category == 'Le Verbe' %}
+  <li><a href="{{ verb_voc }}" class="current">Le Verbe</a></li>
+  {% else %}
+  <li><a href="{{ verb_voc }}">Le Verbe</a></li>
+  {% endif %}
+  {% if vocab_category == 'L\'Adverbe' %}
+  <li><a href="{{ adv_voc }}" class="current">L'Adverbe</a></li>
+  {% else %}
+  <li><a href="{{ adv_voc }}">L'Adverbe</a></li>
+  {% endif %}
+  <li><a href="{{ url_for_security('logout') }}">Déconnexion</a></li>
 </ul>
 <h1>{{ vocab_category }}</h1>
 
@@ -39,10 +54,12 @@
         {% endif %}
     </div>
 </div>
+
 <div class="main-tests">
-    <table>
+    {% for cat in mama %}
+        <h2>{{ cats[cat] }}</h2>
+        <table>
         <tbody>
-        {% for cat in mama %}
         <tr>
             <th>traduire en français</th>
             <td><a href="{{ 'test_'+cat }}">drill</a> </td>
@@ -66,7 +83,6 @@
         </tr>
     </table>
     <div class="vocabulary">
-        <h2>le vocabulaire</h2>
         <table>
             <thead>
               <tr>

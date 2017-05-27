@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <!--script type="text/javascript" src="/keyboard.js" charset="UTF-8"></script>
-    <link rel="stylesheet" type="text/css" href="/keyboard.css"-->
     <script language="JavaScript" src="/static/common.js"> </script>
     <script language="JavaScript" src="/static/main.js"></script>
     <link href="/static/stylesheet.css" type="text/css" rel="stylesheet">
@@ -15,21 +13,20 @@
         <h3 class="text-muted">traduisez-le en russe</h3>
       </div>
       <p>question {{ question_number }} de {{ sumup }}</p>
-      <hr/>
       {% for category, message in get_flashed_messages(with_categories=true) %}
       <div class="alert alert-danger">
         {{ message }}
       </div>
       {% endfor %}
-      <form class="form" action="/materials/bigtestb_{{ cat }}" method="post", autocomplete="off">
+      <form class="form" action="/materials/bigtestb_{{ cat }}" method="post" autocomplete="off">
         <div class="form-group">
           <span class="col-lg-2">{{ question }}</span>
           <div class="col-lg-2">
-            <input type="text" name="answer" placeholder="Answer" class="form-control" ><!-- keyboardInput"-->
+            <input type="text" name="answer" placeholder="réponse" class="form-control" >
             <a href="{{ url_for('keyboard') }}" target="_blank"><img style="vertical-align:bottom;" src="/static/keyboard.gif"
             alt="Виртуальная клавиатура" title="Виртуальная клавиатура" width="42" height="21" border="0"></a>
           </div>
-        <input type="submit" class="btn btn-primary" value="Submit">
+        <input type="submit" class="btn btn-primary" value="confirmer">
         </div>
       </form>
  </div>
