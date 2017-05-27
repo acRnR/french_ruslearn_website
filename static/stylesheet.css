@@ -1,10 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu+Condensed');
 
-
-.body {
-    background-color: coral;
+/* {
+  background-color: burlywood;
 }
 
+.body {
+  background-color: rgba(63,59,183,0.62);
+}*/
 
 .alert-danger {
     display: block;
@@ -12,18 +14,13 @@
     background-color: honeydew;
 }
 
-.form {
-    box-sizing: border-box;
-    background-color: lightpink;
-
-}
 
 .menu-main {
   list-style: none;
   margin: 40px 0 5px;
   padding: 25px 0 5px;
   text-align: center;
-  background: white;
+  background: snow;
 }
 .menu-main li {display: inline-block;}
 .menu-main li:after {
@@ -31,6 +28,7 @@
   color: #606060;
   display: inline-block;
   vertical-align:top;
+  /*background: snow;*/
 }
 .menu-main li:last-child:after {content: none;}
 .menu-main a {
@@ -44,6 +42,7 @@
   text-transform: uppercase;
   display: inline-block;
   transition: color .2s;
+  /*background: snow;*/
 }
 .menu-main a, .menu-main a:visited {color: #9d999d;}
 .menu-main a.current, .menu-main a:hover{color: #9DCFCE;}
@@ -68,5 +67,56 @@
 .menu-main a {
   padding: 25px 0 20px;
   margin: 0 30px;
+/*  background: snow;*/
 }
+}
+
+.auth-form {
+  background-color: burlywood;
+}
+
+table {
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  font-size: 14px;
+  max-width: 70%;
+  width: 70%;
+  text-align: center;
+  border-collapse: collapse;
+  border-top: 7px solid #93CFC1;
+  border-bottom: 7px solid #93CFC1;
+  margin: 40px 0 5px;
+  padding: 25px 0 5px;
+}
+th {
+  font-size: 13px;
+  font-weight: normal;
+  background: snow;
+  border-right: 1px solid #93CFC1;
+  border-left: 1px solid #93CFC1;
+  color: darkgoldenrod;
+  padding: 8px;
+  border-bottom: 1px dashed #93CFC1;
+}
+td {
+  background: snow;
+  border-right: 1px solid #93CFC1;
+  border-left: 1px solid #93CFC1;
+  color: #669;
+  padding: 8px;
+  border-bottom: 1px dashed #93CFC1;
+}
+
+table a {
+  text-decoration: none;
+  color: #669;
+}
+
+table a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3 {
+  color: #9DCFCE;
+  font-family: 'Ubuntu Condensed', sans-serif;
+  text-transform: uppercase;
 }

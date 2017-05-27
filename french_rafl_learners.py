@@ -847,7 +847,7 @@ def bigconj(categ):
 @login_required
 def vocab_nouns():
     ps = 's'
-    cats = {'1d': 'Premier declinasion', 'm': 'Les masculins', 'n': 'Les neutre', '3d': 'Troiseme declinasion',
+    cats = {'1d': 'Premier declinasion', 'm': 'Les masculins', 'n': 'Les neutres', '3d': 'Troiseme declinasion',
            'sg_tantum': 'Singularia Tantum', 'pl_tantum': 'Pluralia tantum'}
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
     sess_2['mark'] = 0
@@ -888,6 +888,7 @@ def vocab_verbs():
     sess_2['mark'] = 0
     sess_2['quiz_v'] = quiz_maker(ps, cat, sorting)
     sess_2['questions_v'] = quiz_maker(ps, cat, sorting)
+    sess_2['big_t_v'] = big_q_maker(ps, cat, sorting)
     sess_2['big_t_v1'] = big_q_maker(ps, bigcat1, sorting)
     sess_2['big_t_v2'] = big_q_maker(ps, bigcat2, sorting)
     sess_2['bigq_v1'] = big_q_maker(ps, bigcat1, sorting)
