@@ -71,10 +71,6 @@
 }
 }
 
-.auth-form {
-  background-color: burlywood;
-}
-
 table {
   font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
   font-size: 14px;
@@ -119,4 +115,84 @@ h1, h2, h3 {
   color: #9DCFCE;
   font-family: 'Ubuntu Condensed', sans-serif;
   text-transform: uppercase;
+}
+
+.alert {
+    background-color: darkgoldenrod;
+    margin:0 auto;
+    max-width:95%;
+    box-sizing:border-box;
+    padding:40px;
+    border-radius:5px;
+    -webkit-box-shadow:  0 0 15px 0 rgba(0, 0, 0, .45);
+    box-shadow:  0 0 15px 0 rgba(0, 0, 0, .45);
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    color: snow;
+}
+
+/* Базовые стили формы */
+form {
+  margin:0 auto;
+  max-width:95%;
+  box-sizing:border-box;
+  padding:40px;
+  border-radius:5px;
+  background:RGBA(255,255,255,1);
+  -webkit-box-shadow:  0 0 15px 0 rgba(0, 0, 0, .45);
+  box-shadow:  0 0 15px 0 rgba(0, 0, 0, .45);
+}
+/* Стили полей ввода */
+input{
+  height:50px;
+  width:100%;
+  border-radius:3px;
+  border:rgba(0,0,0,.3) 2px solid;
+  box-sizing:border-box;
+  font-family: 'Open Sans', sans-serif;
+  font-size:18px;
+  padding:10px;
+  margin-bottom:30px;
+}
+.message:focus,
+input:focus{
+  outline:none;
+   border: #9DCFCE 2px solid;
+   color: darkgoldenrod;
+}
+/* Стили текстового поля */
+.message{
+    background: rgba(255, 255, 255, 0.4);
+    width:100%;
+    height: 120px;
+    border:rgba(0,0,0,.3) 2px solid;
+    box-sizing:border-box;
+    -moz-border-radius: 3px;
+    font-size:18px;
+    font-family: 'Open Sans', sans-serif;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    display:block;
+    padding:10px;
+    margin-bottom:30px;
+    overflow:hidden;
+}
+/* Базовые стили кнопки */
+.button{
+  height:50px;
+  width:100%;
+  border-radius:3px;
+  border:rgba(0,0,0,.3) 0px solid;
+  box-sizing:border-box;
+  padding:10px;
+  background:#90c843;
+  color:#FFF;
+  font-family: 'Open Sans', sans-serif;
+  font-weight:400;
+  font-size: 16pt;
+  transition:background .4s;
+  cursor:pointer;
+}
+/* Изменение фона кнопки при наведении */
+.button:hover{
+  background:#80b438;
 }
