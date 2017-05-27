@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="/static/stylesheet.css" type="text/css" rel="stylesheet">
 <title>Le clavier virtuel</title>
 <style>
 body, table, input, select { font-family: arial; font-size: 8pt; }
@@ -21,10 +22,10 @@ lang = 'russian';
 <body onkeydown="click_ie(event);">
 
 <h3>Le clavier virtuel</h3>
-<div class="explain">
-    <p>Tapez votre réponse</p>
-    <p>(le signe de stress se trouve en haut à gauche)</p>
-    <p>Copiez votre réponse et collez-le dans le formulaire dans l'onglet avec la question</p>
+<div class="alert" align="center">
+    Tapez votre réponse<br>
+    (le signe de stress se trouve en haut à gauche)<br>
+    Copiez votre réponse et collez-le dans le formulaire dans l'onglet avec la question<br>
 </div>
 <form name=lex method="get" action="{{ kekurl }}">
 
@@ -34,9 +35,9 @@ lang = 'russian';
 <SCRIPT LANGUAGE=javascript FOR=textEl EVENT=onfocus>
     click_ie(event);
 </SCRIPT>
-<input type=text name=text size=70>
+<input type=text name=text size=70 id="vkb">
             <table cellpadding="0" cellspacing="0" width="100%" border="0"><tr><td width="19%"><br></td><td id="mbanner" width="81%" class="mbanner">
-                        <table align="left"><tr><td><img src="./static/new_keyboard.gif" width="557" height="195" alt="" border="0" usemap="#newkeyboard"></td></tr></table>
+                        <table align="center"><tr><td><img src="/static/new_keyboard.gif" width="557" height="195" alt="" border="0" usemap="#newkeyboard"></td></tr></table>
                         <map name="newkeyboard">
                             <area alt="" coords="1,1,18,38" href="JavaScript:ping('́');">
 

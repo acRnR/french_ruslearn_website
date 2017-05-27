@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <link href="./static/stylesheet.css" type="text/css" rel="stylesheet">
+    <link href="/static/stylesheet.css" type="text/css" rel="stylesheet">
     <meta charset="UTF-8">
     <title>test d'évaluation</title>
 </head>
@@ -10,7 +10,6 @@
     <div class="header">
         <h3 class="text-muted">traduisez-le en français</h3>
     </div>
-    <hr/>
     {% for category, message in get_flashed_messages(with_categories=true) %}
     <div class="alert alert-danger">
         {{ message }}

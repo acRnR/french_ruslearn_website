@@ -8,6 +8,8 @@
   background-color: rgba(63,59,183,0.62);
 }*/
 
+
+
 .alert-danger {
     display: block;
     max-width: 70%;
@@ -73,7 +75,7 @@
 
 table {
   font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-  font-size: 14px;
+  font-size: 20px;
   max-width: 70%;
   width: 70%;
   text-align: center;
@@ -97,18 +99,18 @@ td {
   background: snow;
   border-right: 1px solid #93CFC1;
   border-left: 1px solid #93CFC1;
-  color: #669;
+  color: black;
   padding: 8px;
   border-bottom: 1px dashed #93CFC1;
 }
 
 table a {
   text-decoration: none;
-  color: #669;
+  color: black;
 }
 
 table a:hover {
-  text-decoration: underline;
+  color: #9d999d;
 }
 
 h1, h2, h3 {
@@ -140,6 +142,8 @@ form {
   background:RGBA(255,255,255,1);
   -webkit-box-shadow:  0 0 15px 0 rgba(0, 0, 0, .45);
   box-shadow:  0 0 15px 0 rgba(0, 0, 0, .45);
+  color: #606060;
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 /* Стили полей ввода */
 input{
@@ -156,7 +160,7 @@ input{
 .message:focus,
 input:focus{
   outline:none;
-   border: #9DCFCE 2px solid;
+   border: darkgoldenrod 2px solid;
    color: darkgoldenrod;
 }
 /* Стили текстового поля */
@@ -176,23 +180,17 @@ input:focus{
     margin-bottom:30px;
     overflow:hidden;
 }
-/* Базовые стили кнопки */
-.button{
-  height:50px;
-  width:100%;
-  border-radius:3px;
-  border:rgba(0,0,0,.3) 0px solid;
-  box-sizing:border-box;
-  padding:10px;
-  background:#90c843;
-  color:#FFF;
-  font-family: 'Open Sans', sans-serif;
-  font-weight:400;
-  font-size: 16pt;
-  transition:background .4s;
-  cursor:pointer;
+
+#vkb {
+    font-size: 20px;
 }
-/* Изменение фона кнопки при наведении */
-.button:hover{
-  background:#80b438;
+
+form table td {
+    border: 1px solid white;
+    background-color: white;
+}
+
+form table {
+    border: 1px solid white;
+    background-color: white;
 }
