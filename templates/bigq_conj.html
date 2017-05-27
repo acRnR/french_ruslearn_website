@@ -13,7 +13,6 @@
         <h3 class="text-muted">mettez le verbe dans une forme propre</h3>
     </div>
     <p>question {{ question_number }} de {{ sumup }}</p>
-    <hr/>
     {% for category, message in get_flashed_messages(with_categories=true) %}
     <div class="alert alert-danger">
         {{ message }}
@@ -26,7 +25,7 @@
             <input type="text" name="answer" placeholder="réponse" class="form-control">
         </div>
         <div class="col-lg-2">
-            <a href="{{ url_for('keyboard') }}" target="_blank"><img style="vertical-align:bottom;" src="/static/pic/keyboard.gif"
+            <a href="{{ url_for('keyboard') }}" target="_blank"><img style="vertical-align:bottom;" src="/static/keyboard.gif"
             alt="Виртуальная клавиатура" title="Виртуальная клавиатура" width="42" height="21" border="0"></a>
         </div>
         <input type="submit" class="btn btn-primary" value="confirmer">

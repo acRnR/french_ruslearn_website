@@ -9,7 +9,6 @@
 {{ uemail }}
 <ul class="menu-main">
   <li><a href="{{ profile_refer }}">Mon compte</a></li>
-  <li><a href="{{ url_for_security('logout') }}">Déconnexion</a></li>
   {% if vocab_category == 'Le Substantif' %}
   <li><a href="{{ noun_voc }}" class="current">Le Substantif</a></li>
   {% else %}
@@ -25,6 +24,7 @@
   {% else %}
   <li><a href="{{ adv_voc }}">L'Adverbe</a></li>
   {% endif %}
+  <li><a href="{{ url_for_security('logout') }}">Déconnexion</a></li>
 </ul>
 <h1>{{ vocab_category }}</h1>
 
