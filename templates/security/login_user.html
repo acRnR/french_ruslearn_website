@@ -1,7 +1,24 @@
 {% from "security/_macros.html" import render_field_with_errors, render_field %}
 <link href="/static/stylesheet.css" type="text/css" rel="stylesheet">
 {% include "security/_messages.html" %}
-<h1>Se connecter</h1>
+
+{% if security.registerable or security.recoverable or security.confirmable %}
+<div class="menu-main">
+<ul>
+  <li><a href="{{ url_for_security('login') }}{% if 'next' in request.args %}?next={{ request.args.next|urlencode }}{% endif %}" class="current">Se connecter</a></li>
+  {% if security.registerable %}
+  <li><a href="{{ url_for_security('register') }}{% if 'next' in request.args %}?next={{ request.args.next|urlencode }}{% endif %}">Créer un compte</a><br/></li>
+  {% endif %}
+  {% if security.recoverable %}
+  <li><a href="{{ url_for_security('forgot_password') }}">Forgot password</a><br/></li>
+  {% endif %}
+  {% if security.confirmable %}
+  <li><a href="{{ url_for_security('send_confirmation') }}">Confirm account</a></li>
+  {% endif %}
+</ul>
+{% endif %}
+</div>
+
 <div class="auth-form">
 <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
   {{ login_user_form.hidden_tag() }}
@@ -12,4 +29,3 @@
   {{ render_field(login_user_form.submit) }}
 </form>
 </div>
-{% include "security/_menu.html" %}
