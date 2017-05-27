@@ -11,7 +11,6 @@
         <h3 class="text-muted">traduisez-le en français</h3>
       </div>
       <p>question {{ question_number }} de {{ sumup }}</p>
-      <hr/>
       {% for category, message in get_flashed_messages(with_categories=true) %}
       <div class="alert alert-danger">
         {{ message }}
@@ -21,10 +20,10 @@
         <div class="form-group">
           <span class="col-lg-2">{{ question }}</span>
           <div class="col-lg-2">
-            <input type="text" name="answer" placeholder="Answer"
+            <input type="text" name="answer" placeholder="réponse"
                    class="form-control">
           </div>
-        <input type="submit" class="btn btn-primary" value="Submit">
+        <input type="submit" class="btn btn-primary" value="confirmer">
         </div>
       </form>
  </div>

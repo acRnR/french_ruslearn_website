@@ -10,7 +10,7 @@ from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.orm import mapper, sessionmaker
 from sqlalchemy.sql import select
 
-"""------------------------------------------------------------------------------"""
+"""---------------- Настройки конфигураций и создание связи с базой данных пользователей ----------------------------"""
 sess_2 = {}
 mail = Mail()
 
@@ -52,7 +52,7 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
 
-"""------------------------------------------------------------------------------"""
+"""--------------------------Функции, получающие данные для выведения на страницах сайта-----------------------------"""
 
 
 def distance(a, b):
@@ -217,7 +217,7 @@ def quiz_maker(ps, cat, sorter, func=None):
         except ValueError:
             continue
     return newd
-"""-------------------------------------------------------------------------"""
+"""--------------------------------Заглавная страница и страница клавиатуры------------------------------------------"""
 
 
 @app.route('/')
@@ -229,9 +229,15 @@ def profile_page():
     v_v = url_for('vocab_verbs')
     a_v = url_for('vocab_adverbs')
     return render_template('profile_page.html',
-                           profile_refer=profile_refer,# quizes_refer=quizes_refer,#test_refer=test_refer,
+                           profile_refer=profile_refer,
                            noun_voc=n_v, verb_voc=v_v, adv_voc=a_v, uemail=uemail)
-"""-----------------------Маленькие----------КВИЗЫ----------------------------------------"""
+
+
+@app.route('/keyboard', methods=['GET'])
+@login_required
+def keyboard():
+    return render_template('reqvkb.html')
+"""-------------------------Страницы с маленькими квизами (тестами на оценку)----------------------------------------"""
 
 
 @app.route('/materials/quiz_<categ>', methods=['GET', 'POST'])
@@ -250,7 +256,7 @@ def quizes_page(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[categ][sess_2["current_question"]]["answer"])
                 if dist == 0:
@@ -258,7 +264,7 @@ def quizes_page(categ):
                 elif dist == 1:
                     sess_2['mark'] += (1/2)
                 else:
-                    sess_2['mistake_q_'+cs[categ]].append(questions[categ][sess_2["current_question"]]["question"]+' - '+questions[categ][sess_2["current_question"]]["answer"])#print(dist, entered_answer, questions[categ][session["current_question"]]["answer"])
+                    sess_2['mistake_q_'+cs[categ]].append(questions[categ][sess_2["current_question"]]["question"]+' - '+questions[categ][sess_2["current_question"]]["answer"])
                 sess_2["current_question"] = str(int(sess_2["current_question"]) + 1)
                 if sess_2["current_question"] in questions:
                     redirect(url_for('quizes_page', categ=categ))
@@ -294,7 +300,7 @@ def quizb_page(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[categ][sess_2["current_question"]]["answer"])
                 if dist == 0:
@@ -307,7 +313,7 @@ def quizb_page(categ):
                 if sess_2["current_question"] in questions:
                     redirect(url_for('quizb_page', categ=categ))
                 else:
-                    return render_template("q_success.html", profile_refer=profile_refer, a=0)#, markk=mark, mistakes=)
+                    return render_template("q_success.html", profile_refer=profile_refer, a=0)
         if "current_question" not in sess_2:
             sess_2["current_question"] = "1"
         elif sess_2["current_question"] not in questions[categ]:
@@ -332,7 +338,7 @@ def qgenpl(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[categ][sess_2["current_question"]]["answer"])
                 if dist == 0:
@@ -370,7 +376,7 @@ def qconj(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[categ][session["current_question"]]["answer"])
                 if dist == 0:
@@ -398,7 +404,7 @@ def qconj(categ):
                                profile_refer=profile_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_verbs'))
-"""-----------------------БОЛЬШИЕ----------КВИЗЫ----------------------------------------"""
+"""---------------------------------------Страницы с большими квизами------------------------------------------------"""
 
 
 @app.route('/materials/bigquiz_<categ>', methods=['GET', 'POST'])
@@ -410,7 +416,7 @@ def bigquiz(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[sess_2["current_question"]]["answer"])
                 if dist == 0:
@@ -448,7 +454,7 @@ def bigquizb(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[sess_2["current_question"]]["answer"])
                 if dist == 0:
@@ -486,7 +492,7 @@ def bigqgenpl():
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[sess_2["current_question"]]["answer"])
                 if dist == 0:
@@ -524,7 +530,7 @@ def bigqconj(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             else:
                 dist = distance(entered_answer, questions[session["current_question"]]["answer"])
                 if dist == 0:
@@ -553,7 +559,7 @@ def bigqconj(categ):
     except NameError:
         redirect(url_for('vocab_verbs'))
 
-"""-----------------------------МАЛЕНЬКИЕ-----ТЕСТЫ---------------------------------------"""
+"""---------------------------Страницы с маленькими упражнениями (тестами не на оценку)------------------------------"""
 
 
 @app.route('/materials/test_<categ>', methods=['GET', 'POST'])
@@ -704,7 +710,7 @@ def test_conj(categ):
                                profile_refer=profile_refer, cat=categ)
     except NameError:
         redirect(url_for('vocab_adverbs'))
-"""------------------------------БОЛЬШИЕ-------------ТЕСТЫ----------------------------------------------"""
+"""-----------------------------------Страницы с большими упражнениями-----------------------------------------------"""
 
 
 @app.route('/materials/bigtest_<categ>', methods=['GET', 'POST'])
@@ -812,7 +818,7 @@ def bigconj(categ):
         if request.method == "POST":
             entered_answer = request.form.get('answer', '')
             if not entered_answer:
-                flash("Please enter an answer", "error")
+                flash("Entrez votre réponse, s'il vous plaît", "error")
             elif entered_answer != questions[sess_2["current_question"]]["answer"]:
                 flash("La bonne réponse:\n" + questions[sess_2["current_question"]]["answer"],
                       "error")
@@ -834,7 +840,7 @@ def bigconj(categ):
     except NameError:
         redirect(url_for('vocab_adverbs'))
 
-"""-----------------------------------МАТЕРИАЛЫ-----------------------------------------------------"""
+"""-------------------------------Страницы с материалами по каждой теме/части речи-----------------------------------"""
 
 
 @app.route('/materials/vocab_nouns')
@@ -929,11 +935,5 @@ def vocab_adverbs():
                            mama=cat, voc=voc, vocab_category="L'Adverbe", ps='adv')
 
 
-@app.route('/keyboard', methods=['GET'])
-@login_required
-def keyboard():
-    return render_template('reqvkb.html')
-
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
