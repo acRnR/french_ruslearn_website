@@ -642,9 +642,9 @@ sess_2['i'] = 0
 @login_required
 def test_gen(categ):
     hints = {
-        '1d': u'l’apparition de la voyelle mobile pour tous les mots présentant une accumulation de consonnes avec la désinence Ø\nles mots à accent non final, tels que гóстья «l’invitée», ont une forme de Génitif pl. en -ий\nles mots à accent final, tels que судья́ «le juge», ont une forme de Génitif pl. en -eй\ndans une séquence «voyelle + й + consonne + a», le mécanisme de la voyelle mobile fait que le -й- est remplacé par un -e-\n!Exceptions! Il y a trois mots en -ня où le /n\'/ reste mou au Gen. pl., si l’accent est final, -ня́, on a une désinence -éй',
-        'm': u'Le Génitif pluriel, outre les désinences de base dans les Types I et II, peut avoir une désinence Ø. La désinence Ø apparaît dans les mots dont le thème change au pluriel (mots en -анин / -янин, en -ёнок / -онок et en -ин)\nUn certain nombre de mots ont une désinence Ø au Génitif pl. Le Génitif pl. sera donc semblable au Nominatif sg., mis à part les quelques cas où l’accent différencie les deux formes',
-        'n': u'Une série de neutre en -o avec élargissement du thème par /j/, comme les substantifs masculins du type брат, le Génitif pl. de ces mots est -ьев\nLe Génitif pl. a une désinence en -ев / -ов (outre les mots de cette série) dans deux mots en -ко mentionnés ci-dessus et dans quelques mots en -ье\nLa désinence type pour cette déclinaison, la désinence Ø, peut entraîner l’apparition d’une voyelle mobile\nIl faut prêter attention aux mots en -ье, ceux-ci ont une forme de Génitif pl. en -ий'
+        '1d': u'l’apparition de la voyelle mobile pour tous les mots présentant une accumulation de consonnes avec la désinence Ø<br>les mots à accent non final, tels que гóстья «l’invitée», ont une forme de Génitif pl. en -ий<br>les mots à accent final, tels que судья́ «le juge», ont une forme de Génitif pl. en -eй<br>dans une séquence «voyelle + й + consonne + a», le mécanisme de la voyelle mobile fait que le -й- est remplacé par un -e-<br>!Exceptions! Il y a trois mots en -ня où le <br>\'/ reste mou au Gen. pl., si l’accent est final, -ня́, on a une désinence -éй',
+        'm': u'Le Génitif pluriel, outre les désinences de base dans les Types I et II, peut avoir une désinence Ø. La désinence Ø apparaît dans les mots dont le thème change au pluriel (mots en -анин / -янин, en -ёнок / -онок et en -ин)<br>Un certain nombre de mots ont une désinence Ø au Génitif pl. Le Génitif pl. sera donc semblable au Nominatif sg., mis à part les quelques cas où l’accent différencie les deux formes',
+        'n': u'Une série de neutre en -o avec élargissement du thème par /j/, comme les substantifs masculins du type брат, le Génitif pl. de ces mots est -ьев<br>Le Génitif pl. a une désinence en -ев / -ов (outre les mots de cette série) dans deux mots en -ко mentionnés ci-dessus et dans quelques mots en -ье<br>La désinence type pour cette déclinaison, la désinence Ø, peut entraîner l’apparition d’une voyelle mobile<br>Il faut prêter attention aux mots en -ье, ceux-ci ont une forme de Génitif pl. en -ий'
     }
     questions = sess_2['ex_genpl']
     try:
@@ -847,7 +847,7 @@ def bigconj(categ):
 @login_required
 def vocab_nouns():
     ps = 's'
-    cats = {'1d': 'Premier declinasion', 'm': 'Les masculins', 'n': 'Les neutre', '3d': 'Troiseme declinasion',
+    cats = {'1d': 'Premier declinasion', 'm': 'Les masculins', 'n': 'Les neutres', '3d': 'Troiseme declinasion',
            'sg_tantum': 'Singularia Tantum', 'pl_tantum': 'Pluralia tantum'}
     cat = ['1d', 'm', 'n', '3d', 'sg_tantum', 'pl_tantum']
     sess_2['mark'] = 0
@@ -888,6 +888,7 @@ def vocab_verbs():
     sess_2['mark'] = 0
     sess_2['quiz_v'] = quiz_maker(ps, cat, sorting)
     sess_2['questions_v'] = quiz_maker(ps, cat, sorting)
+    sess_2['big_t_v'] = big_q_maker(ps, cat, sorting)
     sess_2['big_t_v1'] = big_q_maker(ps, bigcat1, sorting)
     sess_2['big_t_v2'] = big_q_maker(ps, bigcat2, sorting)
     sess_2['bigq_v1'] = big_q_maker(ps, bigcat1, sorting)

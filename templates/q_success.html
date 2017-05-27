@@ -8,17 +8,20 @@
 <body>
 <div class="success">
 {% if a == 0 %}
-<a href="">ok</a>
+<form action="">
+<input type="submit" class="btn btn-primary" value="ok">
+</form>
 {% else %}
+<form action="{{ profile_refer }}">
 <div class="results">
     <h2>Votre résultat: {{ markk }} points</h2>
     <h2>Vos erreurs:</h2>
     {% for mistake in mistakes %}
         <p>{{ mistake }}</p>
     {% endfor %}
-<a href="{{ profile_refer }}">ok</a>
+<input type="submit" class="btn btn-primary" value="ok">
+</div>
 {% endif %}
-    </div>
 </div>
 </body>
 </html>

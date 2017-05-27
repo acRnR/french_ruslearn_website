@@ -26,36 +26,48 @@
   {% endif %}
   <li><a href="{{ url_for_security('logout') }}">Déconnexion</a></li>
 </ul>
+<div class="long-tests" align="center">
 <h1>{{ vocab_category }}</h1>
-
-<div class="long-tests">
-    <div class="test-block">
-        <h2>les drills longs</h2>
-            <p><a href="{{ 'bigtest_'+ ps}}">traduire en français</a> </p>
-            <p><a href="{{ 'bigtestb_'+ ps }}">traduire en russe</a> </p>
-            {% if vocab_category == 'Le Substantif' %}
-                <p><a href="{{ 'biggenpl'}}">génitif pluriel</a> </p>
-            {% elif vocab_category == 'Le Verbe' %}
-                <p><a href="{{ 'bigconj_v'}}">conjugation présent</a> </p>
-                <p><a href="{{ 'bigconj_v1'}}">conjugation présent type I</a> </p>
-                <p><a href="{{ 'bigconj_v2'}}">conjugation présent type II</a> </p>
-            {% endif %}
-    </div>
-    <div class="test-block">
-        <h2>les tests d'évaluation longs</h2>
-        <p><a href="{{ 'bigquiz_'+ ps}}">traduire en français</a> </p>
-        <p><a href="{{ 'bigquizb_'+ ps }}">traduire en russe</a> </p>
+    <table>
+        <tbody>
+        <tr>
+            <th>traduire en français</th>
+            <td><a href="{{ 'bigtest_'+ ps}}">drill long</a></td>
+            <td><a href="{{ 'bigquiz_'+ ps}}">tests d'évaluation long</a></td>
+        </tr>
+        <tr>
+            <th>traduire en russe</th>
+            <td><a href="{{ 'bigtestb_'+ ps }}">drill long</a></td>
+            <td><a href="{{ 'bigtestb_'+ ps }}">test d'évaluation long</a></td>
+        </tr>
         {% if vocab_category == 'Le Substantif' %}
-            <p><a href="{{ 'bigqgenpl'}}">génitif pluriel</a> </p>
+        <tr>
+            <th>génitif pluriel</th>
+            <td><a href="{{ 'biggenpl'}}">drill long</a></td>
+            <td><a href="{{ 'biggenpl'}}">test d'évaluation long</a></td>
+        </tr>
+        <tr>
         {% elif vocab_category == 'Le Verbe' %}
-            <p><a href="{{ 'bigqconj_v'}}">conjugation présent</a> </p>
-            <p><a href="{{ 'bigqconj_v1'}}">conjugation présent type I</a> </p>
-            <p><a href="{{ 'bigqconj_v2'}}">conjugation présent type II</a> </p>
+            <th>conjugation présent</th>
+            <td><a href="{{ 'bigconj_v'}}">drill long</a></td>
+            <td><a href="{{ 'bigqconj_v'}}">test d'évaluation long</a></td>
+        </tr>
+        <tr>
+            <th>conjugation présent type I</th>
+            <td><a href="{{ 'bigconj_v1'}}">drill long</a></td>
+            <td><a href="{{ 'bigqconj_v1'}}">test d'évaluation long</a></td>
+        </tr>
+        <tr>
+            <th>conjugation présent type II</th>
+            <td><a href="{{ 'bigconj_v2'}}">drill long</a></td>
+            <td><a href="{{ 'bigqconj_v2'}}">test d'évaluation long</a></td>
+        </tr>
+        </tbody>
         {% endif %}
-    </div>
+    </table>
 </div>
 
-<div class="main-tests">
+<div class="main-tests" align="center">
     {% for cat in mama %}
         <h2>{{ cats[cat] }}</h2>
         <table>
@@ -82,6 +94,7 @@
             {% endif %}
         </tr>
     </table>
+        <h3> vocabulaire </h3>
     <div class="vocabulary">
         <table>
             <thead>
