@@ -868,7 +868,8 @@ def vocab_nouns():
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
                            profile_refer=profile_refer,
-                           mama=cat, voc=voc, vocab_category='Le Substantif', ps='n', uemail=useremailget())
+                           mama=cat, voc=voc, vocab_category='Le Substantif', ps='n', uemail=useremailget(),
+                           noun_voc=url_for('vocab_nouns'), verb_voc='vocab_verbs', adv_voc=url_for('vocab_adverbs'))
 
 
 @app.route('/materials/vocab_verbs')
@@ -909,7 +910,8 @@ def vocab_verbs():
     voc = voc_maker(ps, cat)
     profile_refer = url_for('profile_page')
     return render_template('vocab.html', uemail=useremailget(),
-                           profile_refer=profile_refer, mama=cat, voc=voc, vocab_category='Le Verbe', ps='v')
+                           profile_refer=profile_refer, mama=cat, voc=voc, vocab_category='Le Verbe', ps='v',
+                           noun_voc=url_for('vocab_nouns'), verb_voc='vocab_verbs', adv_voc=url_for('vocab_adverbs'))
 
 
 @app.route('/materials/vocab_adverbs')
@@ -932,7 +934,8 @@ def vocab_adverbs():
     profile_refer = url_for('profile_page')
     return render_template('vocab.html',
                            profile_refer=profile_refer, uemail=useremailget(),
-                           mama=cat, voc=voc, vocab_category="L'Adverbe", ps='adv')
+                           mama=cat, voc=voc, vocab_category="L'Adverbe", ps='adv',
+                           noun_voc=url_for('vocab_nouns'), verb_voc='vocab_verbs', adv_voc=url_for('vocab_adverbs'))
 
 
 if __name__ == '__main__':
