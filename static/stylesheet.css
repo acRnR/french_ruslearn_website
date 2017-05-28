@@ -135,7 +135,7 @@ h1, h2, h3 {
 /* Базовые стили формы */
 form {
   margin:0 auto;
-  max-width:95%;
+  max-width: 85%;
   box-sizing:border-box;
   padding:40px;
   border-radius:5px;
